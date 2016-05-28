@@ -85,7 +85,7 @@ $testForm = {
 
 ``submitButtonText`` text to be displayed in the submit button
 
-``questions`` object of the question to be asked
+``questions`` an array of objects for the questions
 
 
 
@@ -96,13 +96,14 @@ $testForm = {
 
 ``required`` a boolean value of ``true`` or ``false`` to specify if the question is required
 
-``inputType`` input type for the answer being any of the HTML5 inputs
+``inputType`` string value with an input type for the answer being any of the HTML5 inputs
 
 ``values``* an array of the values used for select question
 
 ``boolean`` a boolean value of ``true`` or ``false`` to specify if the question is a true or false question
 
 
+* *``values`` is required on ``inputType``s of ``select`` and ``boolean`` *
 
 
 This is passed to the jfaFrom "constructor" for each part of the jfa_form.
