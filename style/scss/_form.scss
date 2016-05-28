@@ -39,9 +39,6 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 			margin-bottom:50%;
 		}
 
-		&:last-of-type{
-			margin-bottom: $footerHeight;
-		}
 			.question{
 				display: inline-block;
 			}
@@ -60,23 +57,45 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 					width: 80%;
 					margin-right: 20px;
 					padding:5px;
+					
+					&:focus{
+						outline:none;
+					}
+
 				}
-				input:focus{
-					outline:none;
+				input[type=date]{
+					//For No Ue of brower calendar elect
+					&::-webkit-clear-button,
+					&::-webkit-inner-spin-button,
+					&::-webkit-calendar-picker-indicator {
+				    	display: none;
+					}
+					
 				}
+
 				select{
 					position: absolute;
 					left:-10pc;
 					z-index:-200;
 					opacity: 0;
 				}
-				.btn-answer{
-					background:red;
-					border:none;
-					transition:background .75s;
-				}
-				.btn-answer.selected{
-					background:green;
+
+				&.select{
+
+					.btn-answer{
+						background:red;
+						border:none;
+						transition:background .75s;
+						margin-right: 5px;
+					}
+					
+					.btn-answer.selected{
+						background:green;
+					}
+
+					span.next{
+						clear:left;
+					}
 				}
 
 				span.next{
@@ -109,7 +128,7 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 	
 	.submit{
 		margin-left:40px;
-		margin-bottom:$footerHeight;
+		margin-bottom:$footerHeight + 200px;
 		background: $buttonBackground;
 		border-radius: 4px;
 	}

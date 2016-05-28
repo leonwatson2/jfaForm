@@ -2400,8 +2400,6 @@ body {
       z-index: 50; }
       .jfa-form ul.questions li.item:not(:last-of-type) {
         margin-bottom: 50%; }
-      .jfa-form ul.questions li.item:last-of-type {
-        margin-bottom: 80px; }
       .jfa-form ul.questions li.item .question {
         display: inline-block; }
       .jfa-form ul.questions li.item .question:before, .jfa-form ul.questions li.item .num:before {
@@ -2416,19 +2414,24 @@ body {
           width: 80%;
           margin-right: 20px;
           padding: 5px; }
-        .jfa-form ul.questions li.item .answer input:focus {
-          outline: none; }
+          .jfa-form ul.questions li.item .answer input:focus {
+            outline: none; }
+        .jfa-form ul.questions li.item .answer input[type=date]::-webkit-clear-button, .jfa-form ul.questions li.item .answer input[type=date]::-webkit-inner-spin-button, .jfa-form ul.questions li.item .answer input[type=date]::-webkit-calendar-picker-indicator {
+          display: none; }
         .jfa-form ul.questions li.item .answer select {
           position: absolute;
           left: -10pc;
           z-index: -200;
           opacity: 0; }
-        .jfa-form ul.questions li.item .answer .btn-answer {
+        .jfa-form ul.questions li.item .answer.select .btn-answer {
           background: red;
           border: none;
-          transition: background .75s; }
-        .jfa-form ul.questions li.item .answer .btn-answer.selected {
+          transition: background .75s;
+          margin-right: 5px; }
+        .jfa-form ul.questions li.item .answer.select .btn-answer.selected {
           background: green; }
+        .jfa-form ul.questions li.item .answer.select span.next {
+          clear: left; }
         .jfa-form ul.questions li.item .answer span.next {
           position: relative;
           background: rgba(255, 235, 205, 0.9);
@@ -2446,7 +2449,7 @@ body {
         content: '.'; }
   .jfa-form .submit {
     margin-left: 40px;
-    margin-bottom: 80px;
+    margin-bottom: 280px;
     background: rgba(255, 235, 205, 0.9);
     border-radius: 4px; }
   .jfa-form .footer {
