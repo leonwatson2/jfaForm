@@ -103,7 +103,7 @@ $testForm = {
 ``boolean`` a boolean value of ``true`` or ``false`` to specify if the question is a true or false question
 
 
-* *``values`` is required on ``inputType``s of ``select`` and ``boolean`` *
+*\*``values`` is required on ``inputType``s of ``select`` and ``boolean`` *
 
 
 This is passed to the jfaFrom "constructor" for each part of the jfa_form.
