@@ -18,57 +18,92 @@ If you would like to see that **fell free to ask**!
 ###How it works
 It creates elements from a javascript object that looks as follows.
 ```
-{
-    //id of the element it will be in
+$testForm = {
 		"id":"test",
-		
-		//welcome message
 		"welcome":"Hey, ready to flow? First let us know you're here!",
-		
-		//text for the welcome button
 		"nextButtonText" : "next",
-		
-		//text for the submit button
 		"submitButtonText" : "Send It!",
-		
-		//questions going to be asked
 		"questions":[
 		{
-		//id for question 
 			"id":"name",
-			
 			"question":"What's your name?",
-			
-			//Is it a true or false question
 			"boolean":false,
 			"required":true,
-			
-			//The type of input it is
-			"text":true,
-			"email":false,
-			"checkbox":false,
-			"color":false,
-			"date":false,
-			"datetime":false,
-			"datetime-local":false,
-			"month":false,
-			"number":false,
-			"range":false,
-			"radio":false,
-			"search":false,
-			"select":false,
-			"time":false,
-			"tel":false,
-			"url":false,
-			"week":false
+			"inputType":"text",
+		},
+		{
+			"id":"is-Student",
+			"question":"Are you a student?",
+			"values":["yes", "no"],
+			"boolean":true,
+			"required":false,
+			"inputType":"select",
+		},
+
+		{
+			"id":"student-id",
+			"question":"Student Id Number?",
+			"boolean":false,
+			"required":false,
+			"inputType":"text",
+		},
+
+		{
+			"id":"tshirt-size",
+			"question":"What's your t-shirt size?",
+			"values" : ["x-small", "small", "medium", "large", "x-large", "xx-large"],
+			"boolean":false,
+			"required":true,
+			"inputType":"select",
+		},
+		{
+			"id":"transport-type",
+			"question":"What's your your type size?",
+			"values" : ["run", "fly", "swim"],
+			"required":true,
+			"inputType":"select",
+		},
+		{
+			"id":"birthdate",
+			"question":"When's your birthday?",
+			"required":false,
+			"inputType":"date",
 		}
 	], //questions
-  
-  //ending thank you message
-	"thanks":"Thank you for checking in with us! Go Flow!"
+
+	"thanks":"Thank you for cheking in with us! Go Flow!"
 
 }//testForm object
 ```
+
+### Options
+``id`` a unique id for where the form is going to be set
+
+``welcome`` welcome message to be display at the beginning
+
+``nextButtonText`` text to be displayed in the next button
+
+``submitButtonText`` text to be displayed in the submit button
+
+``questions`` object of the question to be asked
+
+
+
+#### Question Options
+``id`` a unique id to used for the question
+
+``question`` the questions' text to be displayed
+
+``required`` a boolean value of ``true`` or ``false`` to specify if the question is required
+
+``inputType`` input type for the answer being any of the HTML5 inputs
+
+``values``* an array of the values used for select question
+
+``boolean`` a boolean value of ``true`` or ``false`` to specify if the question is a true or false question
+
+
+
 
 This is passed to the jfaFrom "constructor" for each part of the jfa_form.
 Then calling init() on that object puts the questions with numbers in the 
