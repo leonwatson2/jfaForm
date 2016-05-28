@@ -171,8 +171,8 @@ function jfaSetHtml(){
 			$navDownDiv = $('<div>', {class:"nav-down nav"})
 							.click("down", jfaNavButtonClickEvent);
 
-			$iconUp = "jfa-chevron-up";
-			$iconDown = "jfa-chevron-down";
+			$iconUp = "jfa jfa-chevron-up";
+			$iconDown = "jfa jfa-chevron-down";
 			$iconUpElement = $('<i>', {class:$iconUp});
 			$iconDownElement = $('<i>', {class:$iconDown});
 
