@@ -69,10 +69,10 @@ function jfaSetHtml(){
 		});
 
 		$ulQuestions.append($submitBtn);
-		$ulQuestions.append($footer);
 
 
 		$container.html($ulQuestions);
+		$container.append($footer);
 
 
 
