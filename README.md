@@ -11,7 +11,8 @@ what's going on and have complete control over it.
 
 ##Still in production!
 For right now I'm just commiting javascript.
-I test locally and have a .scss file I use to test.
+I test locally and have a .scss file I compile locally found in
+the [style/scss](scss/scss) folder.
 If you would like to see that **fell free to ask**!
 
 ###How it works
@@ -73,10 +74,13 @@ This is passed to the jfaFrom "constructor" for each part of the jfa_form.
 Then calling init() on that object puts the questions with numbers in the 
 element with the id ``"test"`` in this case.
 
+As you image this could also be a json file 
+that is then parse into a JavaScript object.  
+
 
 #### Making a new JFA_Form and putting on the dom.
 ```	
-var r = new jfaForm($testForm);	
-r.init();
+	var r = new jfaForm($testForm);	
+	r.init();
 ```
 
