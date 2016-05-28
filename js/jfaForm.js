@@ -102,16 +102,38 @@ function jfaSetHtml(){
 		$thisQuestion.appendElements($num, $question);
 
 
-		if(ques.text){
+		
 
-			$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent);
+		createAndAppendStructure(ques);
+
+		
+		
+		
+		$ansDiv.append($nextBut)
 
 
-			$ansDiv.append($input);
+		$thisQuestion.append($ansDiv);
+		$items.push($thisQuestion);
+	}//jfaCreateQuestionStructure()
+	function createAndAppendStructure(ques){
+		switch(ques.inputType){
+			case "text" : textInputStructure(ques);
+			break;
+			case "select": selectInputStructure(ques);
+			break;
+			case "date": dateInputStructure(ques);
+			break;
+		}
 
-		} else if(ques.select){
+	}
+	function textInputStructure(ques){
+		$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent);
+		$ansDiv.append($input);
 
-			$ansDiv.addClass("select");
+	}
+
+	function selectInputStructure(ques){
+		$ansDiv.addClass("select");
 
 			$selectDiv = $('<select>', {name:ques.id, id: ques.id}).change(jfaOnChangeEvent);
 			
@@ -131,26 +153,20 @@ function jfaSetHtml(){
 				$selectDiv.append($option);
 				$ansDiv.append($btnAnswer);
 				$ansDiv.append($selectDiv);
+			});
 
+	}
+	function dateInputStructure(ques){
+		$input = $('<input>', {type:"date", id:ques.id}).keyup();
+		$ansDiv.append($input);
+	}
 
-			});// /ques.forEach
-
-
-
-		} //end if
-
-		$ansDiv.append($nextBut)
-
-
-		$thisQuestion.append($ansDiv);
-		$items.push($thisQuestion);
-	}//jfaCreateQuestionStructure()
-	
 	function updateProgressBar(){
 		$numDone = $(".next.ready").length;
 		$percentDone = 100*$numDone / $f.length;
 		console.log($percentDone);
 		$f.progressBarDiv.css('width',$percentDone + "%");
+		$f.numberDoneElement.html($numDone);
 	}
 
 	function jfaGetFooterHtml(){
@@ -158,7 +174,7 @@ function jfaSetHtml(){
 		//progress
 		$progressDiv = $('<div>', {id:"progress"});
 			$labelDiv = $('<div>', {class:"label"});
-			$leftNumSpan = $('<span>', {id:"left", text:"1"});
+			$f.numberDoneElement = $leftNumSpan = $('<span>', {id:"left", text:"0"});
 			$totalNumSpan = $('<span>', {id:"total", text:$f.length});
 		//progressbar
 			$barDiv = $('<div>', {class:"bar"});
@@ -336,23 +352,7 @@ function jfaSetHtml(){
 			"question":"What's your name?",
 			"boolean":false,
 			"required":true,
-			"text":true,
-			"email":false,
-			"checkbox":false,
-			"color":false,
-			"date":false,
-			"datetime":false,
-			"datetime-local":false,
-			"month":false,
-			"number":false,
-			"range":false,
-			"radio":false,
-			"search":false,
-			"select":false,
-			"time":false,
-			"tel":false,
-			"url":false,
-			"week":false
+			"inputType":"text",
 		},
 		{
 			"id":"is-Student",
@@ -360,23 +360,7 @@ function jfaSetHtml(){
 			"values":["yes", "no"],
 			"boolean":true,
 			"required":false,
-			"text":false,
-			"email":false,
-			"checkbox":false,
-			"color":false,
-			"date":false,
-			"datetime":false,
-			"datetime-local":false,
-			"month":false,
-			"number":false,
-			"range":false,
-			"radio":false,
-			"search":false,
-			"select":true,
-			"time":false,
-			"tel":false,
-			"url":false,
-			"week":false
+			"inputType":"select",
 		},
 
 		{
@@ -384,23 +368,7 @@ function jfaSetHtml(){
 			"question":"Student Id Number?",
 			"boolean":false,
 			"required":false,
-			"text":true,
-			"email":false,
-			"checkbox":false,
-			"color":false,
-			"date":false,
-			"datetime":false,
-			"datetime-local":false,
-			"month":false,
-			"number":false,
-			"range":false,
-			"radio":false,
-			"search":false,
-			"select":false,
-			"time":false,
-			"tel":false,
-			"url":false,
-			"week":false
+			"inputType":"text",
 		},
 
 		{
@@ -409,23 +377,20 @@ function jfaSetHtml(){
 			"values" : ["x-small", "small", "medium", "large", "x-large", "xx-large"],
 			"boolean":false,
 			"required":true,
-			"text":false,
-			"email":false,
-			"checkbox":false,
-			"color":false,
-			"date":false,
-			"datetime":false,
-			"datetime-local":false,
-			"month":false,
-			"number":false,
-			"range":false,
-			"radio":false,
-			"search":false,
-			"select":true,
-			"time":false,
-			"tel":false,
-			"url":false,
-			"week":false
+			"inputType":"select",
+		},
+		{
+			"id":"transport-type",
+			"question":"What's your your type size?",
+			"values" : ["run", "fly", "swim"],
+			"required":true,
+			"inputType":"select",
+		},
+		{
+			"id":"birthdate",
+			"question":"When's your birthday?",
+			"required":false,
+			"inputType":"date",
 		}
 	], //questions
 
