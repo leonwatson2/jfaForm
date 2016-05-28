@@ -103,7 +103,7 @@ $testForm = {
 ``boolean`` a boolean value of ``true`` or ``false`` to specify if the question is a true or false question
 
 
-\*``values`` is required on ``inputType``s of ``select`` and ``boolean`` *
+\*``values`` is required on ``inputType``s of ``select`` and ``boolean`` 
 
 
 This is passed to the jfaFrom "constructor" for each part of the jfa_form.
@@ -119,4 +119,13 @@ that is then parse into a JavaScript object.
 	var r = new jfaForm($testForm);	
 	r.init();
 ```
+
+##### Next Steps
+- [ ] Create structure for url input
+- [ ] Create structure for time input
+- [ ] Create structure for week input
+- [ ] Create structure for search input
+- [ ] Create structure for datetime input
+
+- [ ] Style Date input
 
