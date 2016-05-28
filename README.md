@@ -12,7 +12,7 @@ what's going on and have complete control over it.
 ##Still in production!
 For right now I'm just commiting javascript.
 I test locally and have a .scss file I compile locally found in
-the [style/scss](scss/scss) folder.
+the [style/scss](../../scss/scss) folder.
 If you would like to see that **fell free to ask**!
 
 ###How it works
