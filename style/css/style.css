@@ -1,4 +1,7 @@
 @charset "UTF-8";
+/*
+* Normalize.scss locally
+*/
 /*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
 html {
   font-family: sans-serif;
@@ -177,6 +180,9 @@ td,
 th {
   padding: 0; }
 
+/*
+* Font Awesome locally
+*/
 /*!
  *  Font Awesome 4.6.2 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
@@ -2461,9 +2467,11 @@ body {
         height: 4px;
         border-radius: 4px; }
       .jfa-form .footer #progress .progress {
-        width: 40%;
+        background: red;
+        transition-duration: 0.75s;
+        width: 1%;
         height: 100%;
-        background: red; }
+        border-radius: 4px; }
     .jfa-form .footer #nav-buttons {
       display: inline-block;
       margin-right: 4px;

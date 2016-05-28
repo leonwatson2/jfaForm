@@ -1,10 +1,11 @@
 
 $formBackground:#bf2200;
-
+$progress-bar-radius:4px;
+$progress-bar-transition-dur:.75s;
+$footerHeight:80px;
+$buttonBackground:transparentize(blanchedalmond, .1);
 
 .jfa-form{
-	$footerHeight:80px;
-	$buttonBackground:transparentize(blanchedalmond, .1);
 	position: absolute;
 	top:0;
 	left:110%;
@@ -133,15 +134,20 @@ $formBackground:#bf2200;
 				margin-top: 10px;
 				width: 100%;
 				height: 4px;
+				border-radius: $progress-bar-radius;
 
-				border-radius: 4px;
 			}
+
 			.progress{
-				width: 100%*(2/5);
-				height:100%;
-
 				background: red;
+
+				transition-duration:$progress-bar-transition-dur;
+				width: 1%;
+				height:100%;
+				border-radius: $progress-bar-radius;
+				
 			}
+
 		}
 
 		#nav-buttons{
