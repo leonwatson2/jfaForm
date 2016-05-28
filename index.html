@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Form Scrolling thing</title>
+	<link rel="stylesheet" href="style/css/style.css">
+	<link rel="stylesheet" href="/includes/animate.css">
+</head>
+<body>
+	<div class="container">
+		<div id="test"></div>
+		<button id="open-checkin" class="pull-right"> Check in</button>		
+		<div id="jfa-form" style="display:none" class="jfa-form fadeIn">
+			<ul class="questions">
+				<li class="item">
+					<div class="num">1</div>
+					<div class="question">What's your name?</div>
+					<div class="answer select">
+							<button name="student" value="1" class="btn-answer selected">Yes</button>
+							<button name="student" value="0" class="btn-answer">No</button>
+							
+							<select name="student" id="is-student">
+								<option value="1">Yes</option>
+								<option value="0">No</option>
+							</select>
+						<span class="next">next</span></div>
+				</li>
+				<li class="item">
+					<div class="num">2</div>
+					<div class="question">Are you a student at UNT?</div>
+					<div class="answer"><input type="date"><span class="next">ok</span></div>
+				</li>
+				<li class="item">
+					<div class="num">3</div>
+					<div class="question">I like the number cheese do you?</div>
+					<div class="answer"><input type="text"><span class="next">onwards</span></div>
+				</li>
+				<li class="item">
+					<div class="num">4</div>
+					<div class="question">I like the number cheese do you?</div>
+					<div class="answer"><input type="text"><span class="next">continue</span></div>
+				</li>
+				<li class="item">
+					<div class="num">5</div>
+					<div class="question">I like the number cheese do you?</div>
+					<div class="answer"><input type="text"><span class="next">ok</span></div>
+				</li>
+				<li class="item">
+					<div class="num">6</div>
+					<div class="question">I like the number cheese do you?</div>
+					<div class="answer"><input type="text"><span class="next">ok</span></div>
+				</li>
+			</ul>
+			
+			<button class="submit" type="submit">Submit</button>
+
+			<div class="footer">
+				<div id="progress">
+					<div class="label"><span id="left">2</span> of <span id="total">5</span> finished</div>
+					<div class="bar">
+						<div class="progress"></div>
+					</div>
+				</div>
+				<div id="nav-buttons" class="pull-right">
+					<div class="nav">
+						<i class="jfa jfa-chevron-up"></i>
+					</div>
+					<div class="nav">
+						<i class="jfa jfa-chevron-up"></i>
+					</div>
+				</div>
+			</div>
+		</div> <!---/ .jfa-form -->
+	</div>
+	<script src="/includes/jquery-2.1.1.min.js"></script>
+	<script src="js/jfaForm.js"></script>
+	<script>
+	$(document).ready(function(){
+	
+		$("#open-checkin").click(focusForm);
+		
+		function focusForm(){
+			
+			$(".jfa-form").addClass("open");
+			$("#is-student").focus();
+		}
+
+
+
+		var r = new jfaForm($testForm)
+
+	
+	});
+
+	</script>
+</body>
+</html>

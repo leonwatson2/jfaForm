@@ -1,0 +1,118 @@
+.jfa-form {
+  position: absolute;
+  top: 0;
+  left: 110%;
+  transition: left 2s;
+  z-index: 1;
+  background: #bf2200;
+  overflow: scroll;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  font-size: 2.5em; }
+  .jfa-form.open {
+    left: 0; }
+  .jfa-form ul.questions {
+    list-style: none; }
+    .jfa-form ul.questions li.item:not(:last-of-type) {
+      margin-bottom: 50%; }
+    .jfa-form ul.questions li.item {
+      padding: 10px;
+      padding-left: 0;
+      z-index: 50; }
+      .jfa-form ul.questions li.item .question {
+        display: inline-block; }
+      .jfa-form ul.questions li.item .question:before, .jfa-form ul.questions li.item .num:before {
+        font-family: FontAwesome;
+        margin-right: 15px; }
+      .jfa-form ul.questions li.item .answer {
+        position: relative;
+        margin-top: 15px; }
+        .jfa-form ul.questions li.item .answer input {
+          background: transparent;
+          border: dashed 2px white;
+          width: 80%;
+          margin-right: 20px;
+          padding: 5px; }
+        .jfa-form ul.questions li.item .answer input:focus {
+          outline: none; }
+        .jfa-form ul.questions li.item .answer select {
+          position: absolute;
+          left: -10pc;
+          z-index: -200;
+          opacity: 0; }
+        .jfa-form ul.questions li.item .answer .btn-answer {
+          background: red;
+          border: none;
+          transition: background .75s; }
+        .jfa-form ul.questions li.item .answer .btn-answer.selected {
+          background: green; }
+        .jfa-form ul.questions li.item .answer span.next {
+          position: relative;
+          background: rgba(255, 235, 205, 0.9);
+          display: inline-block;
+          margin-top: 15px;
+          padding: 1px 4px;
+          border-radius: 4px;
+          cursor: pointer; }
+      .jfa-form ul.questions li.item .num {
+        position: relative;
+        margin-left: 0;
+        width: 20px;
+        text-align: left; }
+      .jfa-form ul.questions li.item .num:after {
+        content: '.'; }
+  .jfa-form .submit {
+    margin-left: 40px;
+    margin-bottom: 80px;
+    background: rgba(255, 235, 205, 0.9);
+    border-radius: 4px; }
+  .jfa-form .footer {
+    background: green;
+    position: fixed;
+    bottom: 0;
+    z-index: 100;
+    width: 100%;
+    height: 80px; }
+    .jfa-form .footer #progress, .jfa-form .footer #nav-button {
+      display: inline-block; }
+    .jfa-form .footer #progress {
+      padding-left: 10px;
+      font-size: .50em;
+      width: 40%; }
+      .jfa-form .footer #progress .bar {
+        background: rgba(255, 255, 255, 0.6);
+        margin-top: 10px;
+        width: 100%;
+        height: 4px;
+        border-radius: 4px; }
+      .jfa-form .footer #progress .progress {
+        width: 40%;
+        height: 100%;
+        background: red; }
+    .jfa-form .footer #nav-buttons {
+      display: inline-block;
+      margin-right: 4px;
+      height: 100%;
+      padding: 2px;
+      padding-right: 3px;
+      width: 50%; }
+      .jfa-form .footer #nav-buttons .nav {
+        display: inline-block;
+        background: rgba(255, 235, 205, 0.9);
+        height: 85%;
+        margin-top: 4px;
+        margin-right: 4px;
+        float: right;
+        width: 45%;
+        max-width: 85px; }
+        .jfa-form .footer #nav-buttons .nav i {
+          position: relative;
+          left: 23%;
+          top: 20%;
+          margin: auto; }
+      .jfa-form .footer #nav-buttons i:before {
+        margin: 0 auto; }
+
+/*# sourceMappingURL=form.css.map */

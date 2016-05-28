@@ -1,0 +1,180 @@
+
+$formBackground:#bf2200;
+
+
+.jfa-form{
+	$footerHeight:80px;
+	$buttonBackground:transparentize(blanchedalmond, .1);
+	position: absolute;
+	top:0;
+	left:110%;
+	transition:left 2s;
+	&.open{
+		left:0;
+	}
+	z-index: 1;
+
+	background:$formBackground;
+	overflow:scroll;
+	overflow-x: hidden;
+
+	width:100%;
+	height: 100%;
+	margin:0 auto;
+
+	
+	font-size: 2.5em;
+	
+	ul.questions{
+		list-style: none;
+		// margin-top: 50%;
+		
+		li.item:not(:last-of-type){
+			margin-bottom:50%;
+		}
+		li.item{
+			padding:10px;
+			padding-left: 0;
+			z-index:50;
+			
+			.question{
+				display: inline-block;
+			}
+			.question:before, .num:before{
+				font-family: FontAwesome;
+				margin-right: 15px;
+			}
+
+			.answer{
+				position: relative;
+				margin-top: 15px;
+				input{
+					background:transparent;
+					border:dashed 2px white;
+					
+					width: 80%;
+					margin-right: 20px;
+					padding:5px;
+				}
+				input:focus{
+					outline:none;
+				}
+				select{
+					position: absolute;
+					left:-10pc;
+					z-index:-200;
+					opacity: 0;
+				}
+				.btn-answer{
+					background:red;
+					border:none;
+					transition:background .75s;
+				}
+				.btn-answer.selected{
+					background:green;
+				}
+
+				span.next{
+					position: relative;
+					background: $buttonBackground;
+					
+					display: inline-block;
+					margin-top: 15px;
+					padding: 1px 4px;
+
+					border-radius: 4px;
+					
+					cursor:pointer;
+				}
+			}
+
+			.num{
+				position: relative;
+				margin-left: 0;
+				width: 20px;
+				text-align: left;
+			}
+			.num:after{
+				content: '.';
+			}
+			
+		}
+	}
+	
+	
+	.submit{
+		margin-left:40px;
+		margin-bottom:$footerHeight;
+		background: $buttonBackground;
+		border-radius: 4px;
+	}
+	.footer{
+		
+		background: green;
+		position: fixed;
+		bottom: 0;
+		z-index:100;
+		
+		width: 100%;
+		height: $footerHeight;
+
+		#progress, #nav-button{
+			display: inline-block;
+		}
+
+		#progress{
+			padding-left: 10px;
+			font-size: .50em;
+			width:40%;
+			
+			.bar{
+				background: rgba(255, 255, 255, .6);
+
+				margin-top: 10px;
+				width: 100%;
+				height: 4px;
+
+				border-radius: 4px;
+			}
+			.progress{
+				width: 100%*(2/5);
+				height:100%;
+
+				background: red;
+			}
+		}
+
+		#nav-buttons{
+			display: inline-block;
+			margin-right: 4px;
+			height: 100%;
+			padding:2px;
+			padding-right: 3px;
+			width:50%;
+			
+			.nav{
+				display: inline-block;
+				background: $buttonBackground;
+				height:85%;
+				margin-top: 4px;
+				
+				margin-right: 4px;
+				float: right;
+				width: 45%;
+				max-width:85px;
+				i{
+					position: relative;
+					left:23%;
+					top:20%;
+					margin:auto;
+				}
+
+			}
+
+			i:before{
+				margin: 0 auto;
+			}
+		}
+	}
+
+}
