@@ -1,7 +1,7 @@
 
 $formBackground:#bf2200;
-$progress-bar-radius:4px;
-$progress-bar-transition-dur:.75s;
+$progressBarRadius:4px;
+$progressBarTransitionDur:.75s;
 $footerHeight:80px;
 $buttonBackground:transparentize(blanchedalmond, .1);
 
@@ -30,14 +30,18 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 		list-style: none;
 		// margin-top: 50%;
 		
-		li.item:not(:last-of-type){
-			margin-bottom:50%;
-		}
 		li.item{
 			padding:10px;
 			padding-left: 0;
 			z-index:50;
 			
+		&:not(:last-of-type){
+			margin-bottom:50%;
+		}
+
+		&:last-of-type{
+			margin-bottom: $footerHeight;
+		}
 			.question{
 				display: inline-block;
 			}
@@ -134,17 +138,17 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 				margin-top: 10px;
 				width: 100%;
 				height: 4px;
-				border-radius: $progress-bar-radius;
+				border-radius: $progressBarRadius;
 
 			}
 
 			.progress{
 				background: red;
 
-				transition-duration:$progress-bar-transition-dur;
+				transition-duration:$progressBarTransitionDur;
 				width: 1%;
 				height:100%;
-				border-radius: $progress-bar-radius;
+				border-radius: $progressBarRadius;
 				
 			}
 

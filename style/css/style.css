@@ -2394,12 +2394,14 @@ body {
     left: 0; }
   .jfa-form ul.questions {
     list-style: none; }
-    .jfa-form ul.questions li.item:not(:last-of-type) {
-      margin-bottom: 50%; }
     .jfa-form ul.questions li.item {
       padding: 10px;
       padding-left: 0;
       z-index: 50; }
+      .jfa-form ul.questions li.item:not(:last-of-type) {
+        margin-bottom: 50%; }
+      .jfa-form ul.questions li.item:last-of-type {
+        margin-bottom: 80px; }
       .jfa-form ul.questions li.item .question {
         display: inline-block; }
       .jfa-form ul.questions li.item .question:before, .jfa-form ul.questions li.item .num:before {
