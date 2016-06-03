@@ -189,7 +189,7 @@ function jfaSetHtml(){
 	function numberInputStructure(ques){
 		$minNum = ques.min || "";
 		$maxNum = ques.max || "";
-		$numberDiv = $('<input>', {id:ques.id, type:'number'}).click(jfaNumberKeyUpEvent);
+		$numberDiv = $('<input>', {id:ques.id, type:'number'}).keyup(jfaNumberKeyUpEvent);
 
 
 		$ansDiv.append($numberDiv);
@@ -308,9 +308,16 @@ function jfaSetHtml(){
 	}
 
 	function jfaNumberKeyUpEvent(){
-		var val = this.val;
+		var val = this.value;
 		var id = this.attributes.id.value;
-		
+		if(val.length > 0){
+			$nextBut = $(`.next[data-name=${id}]`).addClass("ready");
+			$(`.ques-bar[data-ques=${id}]`).addClass("done");
+		} else {
+			$nextBut = $(`.next[data-name=${id}]`).removeClass("ready");
+			$(`.ques[data-ques=${id}]`).removeClass("done");
+
+		}
 
 	}
 	
