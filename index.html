@@ -10,7 +10,7 @@
 	<div class="container">
 		<div id="test"></div>
 		<button id="open-checkin" class="pull-right"> Check in</button>		
-		<div id="jfa-form" style="display:none" class="jfa-form fadeIn">
+		<div id="jfa-form" style="display:none;" class="jfa-form fadeIn open">
 			<ul class="questions">
 				<li class="item">
 					<div class="num">1</div>
@@ -25,7 +25,7 @@
 							</select>
 						<span class="next">next</span></div>
 				</li>
-				<li class="item">
+				<li class="item active">
 					<div class="num">2</div>
 					<div class="question">Are you a student at UNT?</div>
 					<div class="answer"><input type="date"><span class="next">ok</span></div>
@@ -70,6 +70,32 @@
 					</div>
 				</div>
 			</div>
+			<div class="side-bar">
+				<div class="ques-bar done">
+					<div class="circ"></div>
+					<div class="ques">Name?</div>
+				</div>
+				<div class="ques-bar done">
+					<div class="circ"></div>
+					<div class="ques">Are you Student?</div>
+				</div>
+				<div class="ques-bar">
+					<div class="circ"></div>
+					<div class="ques">Cheese?</div>
+				</div>
+				<div class="ques-bar">
+					<div class="circ"></div>
+					<div class="ques">Cheese2?</div>
+				</div>
+				<div class="ques-bar">
+					<div class="circ"></div>
+					<div class="ques">Cheese3?</div>
+				</div>
+				<div class="ques-bar">
+					<div class="circ"></div>
+					<div class="ques">Cheese4?</div>
+				</div>
+			</div>
 		</div> <!---/ .jfa-form -->
 	</div>
 	<script src="js/jquery-2.1.1.min.js"></script>
@@ -87,10 +113,10 @@
 
 
 
-		var r = new jfaForm($testForm)
 
 	
 	});
+		var r = new jfaForm($testForm)
 
 	</script>
 </body>
