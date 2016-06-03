@@ -9,11 +9,6 @@ So it's just a prefix to prevent conflict with other libraries.
 I wanted to create my own [TypeForm](https://www.typeform.com/), a great application, implementation where I know
 what's going on and have complete control over it.
 
-##Still in production!
-For right now I'm just commiting javascript.
-I test locally and have a .scss file I compile locally found in
-the [style/scss](https://github.com/vlw0052/jfaForm/tree/master/style/scss) folder.
-If you would like to see that **fell free to ask**!
 
 ###How it works
 It creates elements from a javascript object that looks as follows.
@@ -68,6 +63,8 @@ $testForm = {
 			"question":"When's your birthday?",
 			"required":false,
 			"inputType":"date",
+			"max":"01-01-2010",
+			"min":"01-02-1922"
 		}
 	], //questions
 
@@ -101,6 +98,8 @@ $testForm = {
 ``values``* an array of the values used for select question
 
 ``boolean`` a boolean value of ``true`` or ``false`` to specify if the question is a true or false question
+
+``min`` & ``max`` and used for the min and max of inputs number and date
 
 
 \*``values`` is required on ``inputType``s of ``select`` and ``boolean`` 

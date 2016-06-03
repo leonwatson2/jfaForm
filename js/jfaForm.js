@@ -41,7 +41,6 @@ function jfaGoToQuestion(num){
 	 	
 	if(num != this.length ){
 		$('.item').removeClass('active');
-		console.log(this);
 		jfaMakeActiveQuestion.call(this, num);
 		$curScroll = $("#" + this.id).scrollTop();
 		$("#" + this.id).animate({
@@ -53,9 +52,8 @@ function jfaGoToQuestion(num){
 }
 
 function jfaMakeActiveQuestion(num){
-		console.log(this);
 	$ques = this.quesElements[num];
-		$ques.addClass('active');
+	$ques.addClass('active');
 }
 
 function jfaSetHtml(){
@@ -343,7 +341,6 @@ function jfaSetHtml(){
 	function jfaCheckItemInViewport(ques, index, items){
 		$questionContainer = $('#'+ques.id);
 		$curQues = $f.currentQuestion;
-				console.log($curQues);
 		if($curQues != index && $questionContainer.inViewport()){	
 			$i = items[index];
 			if(index > $curQues)
@@ -473,7 +470,8 @@ $testForm = {
 			"question":"When's your birthday?",
 			"required":false,
 			"inputType":"date",
-			"max":"01-01-2010"
+			"max":"01-01-2010",
+			"min":"01-02-1922"
 		}
 	], //questions
 
