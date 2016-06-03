@@ -9,7 +9,7 @@ function jfaForm($f){
 			return;
 		}
 		this.id = $f.id;
-		this.container = $("#"+$f.id);
+		this.container = $(`#${$f.id}`);
 		this.welcome = $f.welcome;
 		this.questions = $f.questions;
 		this.thanks = $f.thanks;
@@ -42,8 +42,8 @@ function jfaGoToQuestion(num){
 	if(num != this.length ){
 		$('.item').removeClass('active');
 		jfaMakeActiveQuestion.call(this, num);
-		$curScroll = $("#" + this.id).scrollTop();
-		$("#" + this.id).animate({
+		$curScroll = $(`#${this.id}`).scrollTop();
+		$(`#${this.id}`).animate({
 			scrollTop : $curScroll + this.quesElements[num].offset().top
 		}, 1000);
 	}
@@ -58,7 +58,7 @@ function jfaMakeActiveQuestion(num){
 
 function jfaSetHtml(){
 	$f = this;
-	$container = $("#"+ $f.id);
+	$container = $(`#${$f.id}`);
 	$submitBtn = $("<button>", {id:$f.id + "-submit", class:"submit", type:"submit", text:$f.submitButtonText});
 	$footer = jfaGetFooterHtml();
 	$sideBar = jfaGetSideBarHtml();
@@ -70,7 +70,7 @@ function jfaSetHtml(){
 
 
 		$ulQuestions = $('<ul>', {class:"questions"});
-		$items.forEach(function(item){
+		$items.forEach(item => {
 			$ulQuestions.append(item);
 		});
 
@@ -158,7 +158,7 @@ function jfaSetHtml(){
 	function selectInputStructure(ques){
 		$ansDiv.addClass("select");
 
-			$selectDiv = $('<select>', {name:ques.id, id: ques.id}).change(jfaOnChangeEvent);
+			$selectDiv = $('<select>', {name:ques.id, id: ques.id, tabindex:-1}).change(jfaSelectOnChangeEvent);
 			
 			ques.values.forEach(function(ans, index, arr){
 				
@@ -187,6 +187,8 @@ function jfaSetHtml(){
 		$ansDiv.append($input);
 	}
 	function numberInputStructure(ques){
+		$minNum = ques.min || "";
+		$maxNum = ques.max || "";
 		$numberDiv = $('<input>', {id:ques.id, type:'number'}).click(jfaNumberKeyUpEvent);
 
 
@@ -196,7 +198,6 @@ function jfaSetHtml(){
 	function updateProgressBar(){
 		$numDone = $(".next.ready").length;
 		$percentDone = 100*$numDone / $f.length;
-		console.log($percentDone);
 		$f.progressBarDiv.css('width',$percentDone + "%");
 		$f.numberDoneElement.html($numDone);
 	}//updateProgressBar
@@ -244,7 +245,7 @@ function jfaSetHtml(){
 	}//jfaGetFooterHtml
 	function jfaGetSideBarHtml(){
 		$sideBarDiv = $('<div>', {class:'side-bar'});
-		$f.questions.forEach(function(ques){
+		$f.questions.forEach(ques => {
 			$quesBar = $('<div>', {class:'ques-bar', 'data-ques':ques.id});
 			$circDiv = $('<div>', {class:'circ'});
 			$ques = $('<div>', {class:'ques', text:ques.question});
@@ -266,14 +267,14 @@ function jfaSetHtml(){
 
 	function jfaSelectButtonClickEvent(){
 		var name = $(this).attr("name");
-		$("button[name=" + name + "]").removeClass("selected");
+		$(` button[name = ${name} ]`).removeClass("selected");
 		$(this).addClass("selected");
-		$("select#" + name).val($(this).val());
-		$curVal = $("select[name=" + name + "]").val();
-		$("select#" + $(this).attr("name")).val();
+		$(`select#${name}`).val($(this).val());
+		$curVal = $(`select[name = ${name} ]`).val();
+		$(` select#${$(this).attr("name")} `).val();
 
-		$(".next[data-name="+ name + "]").addClass("ready");
-		$(".ques-bar[data-ques="+ name +"]").addClass("done");
+		$(`.next[data-name=${name}]`).addClass("ready");
+		$(`.ques-bar[data-ques= ${name} ]`).addClass("done");
 
 		updateProgressBar();
 	}
@@ -296,24 +297,27 @@ function jfaSetHtml(){
 		var id = this.attributes.id.value;
 
 		if(val.length > 2){
-			$nextBut = $(".next[data-name=" + id + "]").addClass("ready");
-			$(".ques-bar[data-ques="+ id +"]").addClass("done");
+			$nextBut = $(`.next[data-name=${id}]`).addClass("ready");
+			$(`.ques-bar[data-ques=${id}]`).addClass("done");
 		} else {
-			$nextBut = $(".next[data-name=" + id + "]").removeClass("ready");
-			$(".ques[data-ques="+ id +"]").removeClass("done");
+			$nextBut = $(`.next[data-name=${id}]`).removeClass("ready");
+			$(`.ques[data-ques=${id}]`).removeClass("done");
 
 		}
 		updateProgressBar();
 	}
 
 	function jfaNumberKeyUpEvent(){
-		console.log(this);
+		var val = this.val;
+		var id = this.attributes.id.value;
 		
+
 	}
 	
 	//onChangeEvents
-	function jfaOnChangeEvent(){
-		console.log("fwe")
+	function jfaSelectOnChangeEvent(){
+		
+
 	}
 
 
@@ -339,7 +343,7 @@ function jfaSetHtml(){
 	}
 
 	function jfaCheckItemInViewport(ques, index, items){
-		$questionContainer = $('#'+ques.id);
+		$questionContainer = $(`#${ques.id}`);
 		$curQues = $f.currentQuestion;
 		if($curQues != index && $questionContainer.inViewport()){	
 			$i = items[index];
@@ -364,13 +368,13 @@ function jfaSetHtml(){
 			
 			var allQuestions = "";
 
-			$f.questions.forEach(function(item, index, arr){
+			$f.questions.forEach((item, index, arr) => {
 				var completeQuestion = "";
-				completeQuestion += (index + " : " + item.question);
+				completeQuestion += (`${index}:${item.question}`);
 				if(values && item.values != undefined){
 					var t = "\tValues:\n\t\t";
 					item.values.forEach(function(item, index, arr){
-						t += (index + " : " + item + "\t");
+						t += (`${index}:${item.question}\t`);
 					});
 					
 					completeQuestion += t;
@@ -394,7 +398,7 @@ function jfaSetHtml(){
 
 	function jfaWarn(string){
 		
-		console.warn("JfaForm: " + string);
+		console.warn(`JfaForm: ${string}`);
 		return;
 	}
 
