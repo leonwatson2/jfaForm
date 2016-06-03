@@ -1,11 +1,7 @@
 
 function jfaForm($f){
-	//fix margin between select questions
 	//add side bar 
-	//add footer
-	//add on change of select
-	//add focus next input
-	//update footer progress
+	//add next on enter
 	if($f.id != undefined){
 
 		if($f.questions.length < 1){
@@ -13,6 +9,7 @@ function jfaForm($f){
 			return;
 		}
 		this.id = $f.id;
+		this.container = $("#"+$f.id);
 		this.welcome = $f.welcome;
 		this.questions = $f.questions;
 		this.thanks = $f.thanks;
@@ -25,6 +22,9 @@ function jfaForm($f){
 		this.currentQuestion = 0;
 		this.goToQuestion = jfaGoToQuestion;
 		this.init();
+
+
+
 	} else {
 		jfaWarn("No id was entered for JfaForm.");
 	}
@@ -33,29 +33,37 @@ function jfaForm($f){
 	
 }	
 
+
+
 //visual
 function jfaGoToQuestion(num){
 	num = num != undefined ? num : this.currentQuestion;
 	 	
-	
-	if(num != this.length){
-
+	if(num != this.length ){
+		$('.item').removeClass('active');
+		console.log(this);
+		jfaMakeActiveQuestion.call(this, num);
 		$curScroll = $("#" + this.id).scrollTop();
 		$("#" + this.id).animate({
 			scrollTop : $curScroll + this.quesElements[num].offset().top
-		});
+		}, 1000);
 	}
 	
 
 }
 
-
+function jfaMakeActiveQuestion(num){
+		console.log(this);
+	$ques = this.quesElements[num];
+		$ques.addClass('active');
+}
 
 function jfaSetHtml(){
 	$f = this;
 	$container = $("#"+ $f.id);
 	$submitBtn = $("<button>", {id:$f.id + "-submit", class:"submit", type:"submit", text:$f.submitButtonText});
 	$footer = jfaGetFooterHtml();
+	$sideBar = jfaGetSideBarHtml();
 	$container.addClass("jfa-form open");
 	$items = [];
 
@@ -72,14 +80,29 @@ function jfaSetHtml(){
 
 
 		$container.html($ulQuestions);
+		
+
 		$container.append($footer);
 
+		$container.append($sideBar);
 
+		jfaScrollEvent();
+	}
+	function jfainit(){
+		jfaSetHtml();
+		jfaScrollEvent();
+	}
 
+	function jfaScrollEvent(){
+		
+		$f.container.scroll(function(){
+			$f.questions.forEach(jfaCheckItemInViewport);
+		});
 	}
 	
 	function jfaCreateQuestionStructure(ques, index, arr){
-		$thisQuestion = $f.quesElements[index] = $('<li>', {class:"item"});
+		$classes = index == 0 ? "item active" : "item";
+		$thisQuestion = $f.quesElements[index] = $('<li>', {class:$classes, "data-ques":ques.id});
 		$thisQuestion.element = {};
 
 		$thisQuestion.num = index + 1;
@@ -123,6 +146,8 @@ function jfaSetHtml(){
 			break;
 			case "date": dateInputStructure(ques);
 			break;
+			case "number": numberInputStructure(ques);
+			break;
 		}
 
 	}
@@ -157,8 +182,17 @@ function jfaSetHtml(){
 
 	}
 	function dateInputStructure(ques){
-		$input = $('<input>', {type:"date", id:ques.id}).keyup();
+		$minDate = ques.min || "01-01-1930";
+		$maxDate = ques.max || "01-01-2010";
+
+		$input = $('<input>', {type:"date", id:ques.id, min:$minDate, max:$maxDate}).keyup();
 		$ansDiv.append($input);
+	}
+	function numberInputStructure(ques){
+		$numberDiv = $('<input>', {id:ques.id, type:'number'}).click(jfaNumberKeyUpEvent);
+
+
+		$ansDiv.append($numberDiv);
 	}
 
 	function updateProgressBar(){
@@ -167,7 +201,7 @@ function jfaSetHtml(){
 		console.log($percentDone);
 		$f.progressBarDiv.css('width',$percentDone + "%");
 		$f.numberDoneElement.html($numDone);
-	}
+	}//updateProgressBar
 
 	function jfaGetFooterHtml(){
 		$footDiv = $('<div>', {class:"footer"});
@@ -209,8 +243,21 @@ function jfaSetHtml(){
 
 		return $footDiv;
 
-	}
+	}//jfaGetFooterHtml
+	function jfaGetSideBarHtml(){
+		$sideBarDiv = $('<div>', {class:'side-bar'});
+		$f.questions.forEach(function(ques){
+			$quesBar = $('<div>', {class:'ques-bar', 'data-ques':ques.id});
+			$circDiv = $('<div>', {class:'circ'});
+			$ques = $('<div>', {class:'ques', text:ques.question});
+			
+			$quesBar.append($circDiv);
+			$quesBar.append($ques);
+			$sideBarDiv.append($quesBar);
+		});
 
+		return $sideBarDiv;
+	}//jfaGetSideBarHtml()
 	//clickEvents
 	function jfaNextButtonClickEvent(){
 		if($f.currentQuestion < $f.length - 1)
@@ -228,6 +275,7 @@ function jfaSetHtml(){
 		$("select#" + $(this).attr("name")).val();
 
 		$(".next[data-name="+ name + "]").addClass("ready");
+		$(".ques-bar[data-ques="+ name +"]").addClass("done");
 
 		updateProgressBar();
 	}
@@ -243,22 +291,28 @@ function jfaSetHtml(){
 		updateProgressBar();
 	}
 
+
 	//keyUpEvents
 	function jfaOnKeyUpEvent(){
 		var val = this.value;
 		var id = this.attributes.id.value;
 
-		console.log($nextBut);
 		if(val.length > 2){
 			$nextBut = $(".next[data-name=" + id + "]").addClass("ready");
-			
+			$(".ques-bar[data-ques="+ id +"]").addClass("done");
 		} else {
 			$nextBut = $(".next[data-name=" + id + "]").removeClass("ready");
+			$(".ques[data-ques="+ id +"]").removeClass("done");
 
 		}
 		updateProgressBar();
 	}
 
+	function jfaNumberKeyUpEvent(){
+		console.log(this);
+		
+	}
+	
 	//onChangeEvents
 	function jfaOnChangeEvent(){
 		console.log("fwe")
@@ -284,6 +338,20 @@ function jfaSetHtml(){
 		for (var z = 0; z < arguments.length; z++) {
 			this.append(arguments[z]);
 		};
+	}
+
+	function jfaCheckItemInViewport(ques, index, items){
+		$questionContainer = $('#'+ques.id);
+		$curQues = $f.currentQuestion;
+				console.log($curQues);
+		if($curQues != index && $questionContainer.inViewport()){	
+			$i = items[index];
+			if(index > $curQues)
+				$f.currentQuestion ++;
+			else $f.currentQuestion--;
+			jfaMakeActiveQuestion.call($f, index)
+		}
+
 	}
 
 
@@ -333,15 +401,29 @@ function jfaSetHtml(){
 		return;
 	}
 
+//outsourced
+
+$.fn.inViewport = function checkInViewport() {
+	
+	$item = $(this).parent().parent();
+	offset = $item.offset().top;
+	$height = $item.height();
+
+	$val = window.innerHeight - (offset + $height);
+
+	console.log();
+  
+  return (
+   $val > 0 && $val < window.innerHeight
+  );
+}
 
 
 
 
 
 
-
-
-	$testForm = {
+$testForm = {
 		"id":"test",
 		"welcome":"Hey, ready to flow? First let us know you're here!",
 		"nextButtonText" : "next",
@@ -368,7 +450,7 @@ function jfaSetHtml(){
 			"question":"Student Id Number?",
 			"boolean":false,
 			"required":false,
-			"inputType":"text",
+			"inputType":"number",
 		},
 
 		{
@@ -391,9 +473,13 @@ function jfaSetHtml(){
 			"question":"When's your birthday?",
 			"required":false,
 			"inputType":"date",
+			"max":"01-01-2010"
 		}
 	], //questions
 
 	"thanks":"Thank you for cheking in with us! Go Flow!"
 
 }//testForm object
+
+
+
