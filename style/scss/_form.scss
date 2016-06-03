@@ -6,6 +6,9 @@ $footerHeight:80px;
 $buttonBackground:transparentize(blanchedalmond, .1);
 
 .jfa-form{
+	@include noNumberSpinner();
+	@include noDateButtons();
+
 	position: absolute;
 	top:0;
 	left:110%;
@@ -67,16 +70,7 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 					}
 
 				}
-				input[type=date]{
-					//For No Ue of brower calendar elect
-					&::-webkit-clear-button,
-					&::-webkit-inner-spin-button,
-					&::-webkit-calendar-picker-indicator {
-				    	display: none;
-					}
-					
-				}
-
+				
 				select{
 					position: absolute;
 					left:-10pc;
@@ -213,10 +207,11 @@ $buttonBackground:transparentize(blanchedalmond, .1);
 	.side-bar{
 		display: none;
 	}
-
+	
 
 	@include screen(false, 'md'){
 		.side-bar{
+			display: block;
 			position: fixed;
 			right:50px;
 			top:40%;
