@@ -15,12 +15,17 @@ function jfaForm($f){
 		this.thanks = $f.thanks;
 		this.nextButtonText = $f.nextButtonText;
 		this.submitButtonText = $f.submitButtonText;
+		this.postPath = $f.postPath;
+		this.post = jfaPostData;
 		this.length = $f.questions.length;
 		this.print = jfaPrint;
 		this.init = jfaSetHtml;
 		this.quesElements = [];
+		this.required = [];
 		this.currentQuestion = 0;
 		this.goToQuestion = jfaGoToQuestion;
+		this.ansElements = [];
+		this.valid = false;
 		this.init();
 
 
@@ -40,7 +45,6 @@ function jfaGoToQuestion(num){
 	num = num != undefined ? num : this.currentQuestion;
 	 	
 	if(num != this.length ){
-		$('.item').removeClass('active');
 		jfaMakeActiveQuestion.call(this, num);
 		$curScroll = $(`#${this.id}`).scrollTop();
 		$(`#${this.id}`).animate({
@@ -52,6 +56,8 @@ function jfaGoToQuestion(num){
 }
 
 function jfaMakeActiveQuestion(num){
+
+	$('.item').removeClass('active');
 	$ques = this.quesElements[num];
 	$ques.addClass('active');
 }
@@ -59,7 +65,14 @@ function jfaMakeActiveQuestion(num){
 function jfaSetHtml(){
 	$f = this;
 	$container = $(`#${$f.id}`);
-	$submitBtn = $("<button>", {id:$f.id + "-submit", class:"submit", type:"submit", text:$f.submitButtonText});
+	$submitBtnAttrs = {	
+						id:`${$f.id}-submit`, class:"submit", 
+						type:"submit", text:$f.submitButtonText
+					};
+	$submitBtn = $("<button>", $submitBtnAttrs)
+				.click(function(){
+					jfaSubmit.call($f);
+				});
 	$footer = jfaGetFooterHtml();
 	$sideBar = jfaGetSideBarHtml();
 	$container.addClass("jfa-form open");
@@ -85,18 +98,72 @@ function jfaSetHtml(){
 		$container.append($sideBar);
 
 		jfaScrollEvent();
-	}
+	}//jfaSetHtml
 	function jfainit(){
 		jfaSetHtml();
 		jfaScrollEvent();
-	}
+	}//jfainit
+
+	function jfaSubmit(){
+		console.log(this);
+		this.required.forEach(item => {
+			if(item.element.ans.val() != "")
+			console.log(item);
+		})
+
+		this.quesElements.forEach((item, index) => {
+			jfaValidateInput.call(this, item, index);
+		});
+
+		if(this.valid){
+			this.post();
+		}
+
+	}//jfaSubmit
+
+	function jfaValidateInput(item, index){
+		$question = item.element.question.html();
+		$ans = item.element.ans.val();
+			
+		// validation happens
+
+
+
+
+		var valid = true;
+		if(valid){
+			this.valid = true;
+		}
+
+
+
+	}//jfaValildateInput
+
+	function jfaPostData(){
+
+		data = {};
+
+		this.ansElements.forEach(function(item){
+			data[item[0].id] = item.val();
+		});
+		console.log(data);
+
+		$url = this.postPath;
+
+		$.post($url, data, function (data){
+			console.log(data);
+		}).fail(function(d){
+			if(d.status == 404)
+				jfaWarn(`The postpath: ${$url} could not be found `);
+		});
+	}//jfaPostData
 
 	function jfaScrollEvent(){
 		
 		$f.container.scroll(function(){
 			$f.questions.forEach(jfaCheckItemInViewport);
 		});
-	}
+	}//jfaScrollEvent
 	
 	function jfaCreateQuestionStructure(ques, index, arr){
 		$classes = index == 0 ? "item active" : "item";
@@ -107,15 +174,20 @@ function jfaSetHtml(){
 		$num = $('<div>', {class:"num"})
 				.html($thisQuestion.num);
 
-		$thisQuestion.element.ans = $ansDiv = $('<div>', {class:"answer"});
+		$thisQuestion.element.ansContainer = $ansDiv = $('<div>', {class:"answer"});
 		$thisQuestion.element.question 
 			= $question 
 			= $('<div>', {class:"question", required:ques.required})
 				.html(ques.question);
+		if(ques.required){
+			$f.required.push($thisQuestion);
+			$thisQuestion.answered = false;
+		}
 
 		$thisQuestion.element.nextButton 
 			= $nextBut 
-			= $('<span>', {class:"next", 'data-num':$thisQuestion.num, 'data-name':ques.id})
+			= $('<span>', {class:"next", 'data-num':$thisQuestion.num, 'data-name':ques.id, 'tabindex':0})
+				.keypress(jfaNextButtonKeyPress)
 				.html($f.nextButtonText)
 				.click(jfaNextButtonClickEvent);
 
@@ -137,6 +209,7 @@ function jfaSetHtml(){
 		$items.push($thisQuestion);
 	}//jfaCreateQuestionStructure()
 	function createAndAppendStructure(ques){
+
 		switch(ques.inputType){
 			case "text" : textInputStructure(ques);
 			break;
@@ -150,16 +223,18 @@ function jfaSetHtml(){
 
 	}
 	function textInputStructure(ques){
+		$thisQuestion.element.ans = 
 		$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent);
 		$ansDiv.append($input);
-
+		$f.ansElements.push($input);
 	}
 
 	function selectInputStructure(ques){
 		$ansDiv.addClass("select");
 
-			$selectDiv = $('<select>', {name:ques.id, id: ques.id, tabindex:-1}).change(jfaSelectOnChangeEvent);
-			
+		$thisQuestion.element.ans = 
+		$selectDiv = $('<select>', {name:ques.id, id: ques.id, tabindex:-1}).change(jfaSelectOnChangeEvent);
+		$f.ansElements.push($selectDiv);	
 			ques.values.forEach(function(ans, index, arr){
 				
 				$classes = "btn-answer";
@@ -183,14 +258,18 @@ function jfaSetHtml(){
 		$minDate = ques.min || "01-01-1930";
 		$maxDate = ques.max || "01-01-2010";
 
-		$input = $('<input>', {type:"date", id:ques.id, min:$minDate, max:$maxDate}).keyup();
+		$thisQuestion.element.ans = 
+		$input = $('<input>', {type:"date", id:ques.id, min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent);
+		$f.ansElements.push($numberDiv);
 		$ansDiv.append($input);
 	}
 	function numberInputStructure(ques){
 		$minNum = ques.min || "";
 		$maxNum = ques.max || "";
-		$numberDiv = $('<input>', {id:ques.id, type:'number'}).keyup(jfaNumberKeyUpEvent);
 
+		$thisQuestion.element.ans = 
+		$numberDiv = $('<input>', {id:ques.id, type:'number'}).keyup(jfaNumberKeyUpEvent);
+		$f.ansElements.push($numberDiv);
 
 		$ansDiv.append($numberDiv);
 	}
@@ -266,6 +345,7 @@ function jfaSetHtml(){
 	}
 
 	function jfaSelectButtonClickEvent(){
+		console.log($thisQuestion);
 		var name = $(this).attr("name");
 		$(` button[name = ${name} ]`).removeClass("selected");
 		$(this).addClass("selected");
@@ -319,17 +399,23 @@ function jfaSetHtml(){
 
 		}
 
-	}
+	}//jfaNumberKeyUpEvent
+	function jfaCalendarKeyUpEvent(){
+		console.log(this.value);
+	}//jfaCalendarKeyUpEvent
 	
 	//onChangeEvents
 	function jfaSelectOnChangeEvent(){
-		
+				
 
-	}
-
-
+	}//jfaSelectOnChangeEvent
 
 
+
+	//onkeypress
+	function jfaNextButtonKeyPress(){
+
+	}//jfaNextButtonKeyPress
 	(function addCustomJqueryElementFunctions(){
 
 		$.fn.appendElements = appendElements;
@@ -436,6 +522,7 @@ $testForm = {
 		"welcome":"Hey, ready to flow? First let us know you're here!",
 		"nextButtonText" : "next",
 		"submitButtonText" : "Send It!",
+		"postPath" : "postit.php",
 		"questions":[
 		{
 			"id":"name",
