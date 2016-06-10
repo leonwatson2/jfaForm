@@ -1,0 +1,29 @@
+/*
+* Genral
+*/
+$accentColor:#58A9FF;
+$formBackground:#fff;
+$answerBorderColor: black;
+
+
+/*
+* Buttons
+*/
+$buttonBackground:transparentize($accentColor, .1);
+
+/*
+* Select Button
+*/
+$selectButtonBackground: #A4D0FF;
+$selectButtonColor: #111;
+$selectButtonChosenBackground: #FFC258;
+$selectButtonChosenColor: #111;
+/*
+* Footer
+*/
+$progressBarColor:#000;
+$progressBarTotalColor:$accentColor;
+$progressBarRadius:4px;
+$progressBarTransitionDur:.75s;
+$footerColor: #52687F;
+$footerHeight:80px;
