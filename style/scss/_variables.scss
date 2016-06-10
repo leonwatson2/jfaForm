@@ -7,6 +7,13 @@ $answerBorderColor: black;
 
 
 /*
+* Header
+*/
+$headerHeight:80px;
+$headerColor:inherit;
+$headerBackground:#2C6DB2;
+
+/*
 * Buttons
 */
 $buttonBackground:transparentize($accentColor, .1);

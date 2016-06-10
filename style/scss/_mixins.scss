@@ -21,9 +21,9 @@
 	-webkit-flex-wrap:$wrap;
 	flex-wrap:$wrap;
 
-	-webkit-align-content:$align-content;
 	-moz-align-content:$align-content;
 	-ms-align-content:$align-content;
+	-webkit-align-content:$align-content;
 	align-content:$align-content;
 	
   	-moz-box-pack: $justify;
@@ -31,8 +31,8 @@
 	-webkit-justify-content:$justify;
 	justify-content:$justify;
 
-	-webkit-box-align:$align-items;
 	-webkit-align-items:$align-items;
+	-webkit-box-align:$align-items;
 	align-items:$align-items;
 
 	-webkit-flex-direction:$direction;

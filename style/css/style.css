@@ -2418,6 +2418,9 @@ body {
 * Genral
 */
 /*
+* Header
+*/
+/*
 * Buttons
 */
 /*
@@ -2449,8 +2452,68 @@ body {
     display: none; }
   .jfa-form.open {
     left: 0; }
+  .jfa-form .header {
+    height: 80px;
+    width: 100%;
+    z-index: 400;
+    background: #2C6DB2;
+    color: inherit;
+    position: fixed;
+    transition: .75s;
+    font-size: 1em;
+    display: -ms-flexbox;
+    display: -moz-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -moz-align-content: center;
+    -ms-align-content: center;
+    -webkit-align-content: center;
+    align-content: center;
+    -moz-box-pack: space-between;
+    -ms-flex-pack: space-between;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-flex-direction: row;
+    flex-direction: row; }
+    .jfa-form .header .brand {
+      margin-left: 20px;
+      height: 80%;
+      display: -ms-flexbox;
+      display: -moz-box;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      -moz-align-content: space-between;
+      -ms-align-content: space-between;
+      -webkit-align-content: space-between;
+      align-content: space-between;
+      -moz-box-pack: space-between;
+      -ms-flex-pack: space-between;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-align-items: center;
+      -webkit-box-align: center;
+      align-items: center;
+      -webkit-flex-direction: row;
+      flex-direction: row; }
+      .jfa-form .header .brand .logo {
+        height: 80%; }
+    .jfa-form .header .title {
+      margin-right: 20px; }
+    .jfa-form .header.mini {
+      height: 40px;
+      font-size: .5em; }
   .jfa-form ul.questions {
-    list-style: none; }
+    list-style: none;
+    margin-top: 80px; }
     .jfa-form ul.questions li.item {
       padding: 10px;
       padding-left: 0;
@@ -2518,13 +2581,14 @@ body {
     margin-left: 40px;
     margin-bottom: 280px;
     background: rgba(88, 169, 255, 0.9);
-    border-radius: 4px; }
+    border-radius: 4px;
+    border: none; }
   .jfa-form .footer {
     background: #52687F;
     position: fixed;
     bottom: 0;
     z-index: 100;
-    width: 99%;
+    width: 100%;
     height: 80px; }
     .jfa-form .footer #progress, .jfa-form .footer #nav-button {
       display: inline-block; }
@@ -2583,16 +2647,16 @@ body {
         display: flex;
         -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
-        -webkit-align-content: space-between;
         -moz-align-content: space-between;
         -ms-align-content: space-between;
+        -webkit-align-content: space-between;
         align-content: space-between;
         -moz-box-pack: flex-start;
         -ms-flex-pack: flex-start;
         -webkit-justify-content: flex-start;
         justify-content: flex-start;
-        -webkit-box-align: center;
         -webkit-align-items: center;
+        -webkit-box-align: center;
         align-items: center;
         -webkit-flex-direction: row;
         flex-direction: row;
