@@ -9,7 +9,9 @@ function jfaForm($f){
 			return;
 		}
 		this.id = $f.id;
-		this.container = $(`#${$f.id}`);
+		this.title = $f.title;
+		this.logoPath = $f.logoPath;
+		this.container = $('#' +$f.id);
 		this.welcome = $f.welcome;
 		this.questions = $f.questions;
 		this.thanks = $f.thanks;
@@ -22,12 +24,12 @@ function jfaForm($f){
 		this.init = jfaSetHtml;
 		this.quesElements = [];
 		this.required = [];
+		this.percentDone = 0;
 		this.currentQuestion = 0;
 		this.goToQuestion = jfaGoToQuestion;
 		this.ansElements = [];
 		this.valid = false;
 		this.init();
-
 
 
 	} else {
@@ -46,9 +48,9 @@ function jfaGoToQuestion(num){
 	 	
 	if(num != this.length ){
 		jfaMakeActiveQuestion.call(this, num);
-		$curScroll = $(`#${this.id}`).scrollTop();
-		$(`#${this.id}`).animate({
-			scrollTop : $curScroll + this.quesElements[num].offset().top
+		$curScroll = $('#'+ this.id).scrollTop();
+		$('#'+ this.id).animate({
+			scrollTop : $curScroll + this.quesElements[num].offset().top - 100
 		}, 1000);
 	}
 	
@@ -64,16 +66,18 @@ function jfaMakeActiveQuestion(num){
 
 function jfaSetHtml(){
 	$f = this;
-	$container = $(`#${$f.id}`);
+	$container = $('#' + $f.id);
 	$submitBtnAttrs = {	
-						id:`${$f.id}-submit`, class:"submit", 
+						id:$f.id+"-submit", class:"submit", 
 						type:"submit", text:$f.submitButtonText
 					};
 	$submitBtn = $("<button>", $submitBtnAttrs)
 				.click(function(){
 					jfaSubmit.call($f);
 				});
+	$header = jfaGetHeaderHtml();
 	$footer = jfaGetFooterHtml();
+	$thanks = jfaGetThanksHtml();
 	$sideBar = jfaGetSideBarHtml();
 	$container.addClass("jfa-form open");
 	$items = [];
@@ -83,19 +87,17 @@ function jfaSetHtml(){
 
 
 		$ulQuestions = $('<ul>', {class:"questions"});
-		$items.forEach(item => {
+		$items.forEach(function(item){
 			$ulQuestions.append(item);
 		});
 
 		$ulQuestions.append($submitBtn);
 
 
-		$container.html($ulQuestions);
+		$container.append();
 		
 
-		$container.append($footer);
-
-		$container.append($sideBar);
+		$container.appendElements($header, $ulQuestions, $footer, $sideBar, $thanks);
 
 		jfaScrollEvent();
 	}//jfaSetHtml
@@ -105,17 +107,17 @@ function jfaSetHtml(){
 	}//jfainit
 
 	function jfaSubmit(){
-		console.log(this);
-		this.required.forEach(item => {
+		$f = this;
+		this.required.forEach(function(item){
 			if(item.element.ans.val() != "")
 			console.log(item);
 		})
 
-		this.quesElements.forEach((item, index) => {
-			jfaValidateInput.call(this, item, index);
+		this.quesElements.forEach(function(item, index){
+			jfaValidateInput.call($f, item, index);
 		});
-
 		if(this.valid){
+		console.log("Here");
 			this.post();
 		}
 
@@ -127,7 +129,7 @@ function jfaSetHtml(){
 			
 		// validation happens
 
-
+		
 
 
 		var valid = true;
@@ -142,7 +144,7 @@ function jfaSetHtml(){
 	function jfaPostData(){
 
 		data = {};
-
+		$f = this; 
 		this.ansElements.forEach(function(item){
 			data[item[0].id] = item.val();
 		});
@@ -151,10 +153,13 @@ function jfaSetHtml(){
 		$url = this.postPath;
 
 		$.post($url, data, function (data){
-			console.log(data);
+			$("#" + $f.id + " .thanks").addClass('open');
 		}).fail(function(d){
 			if(d.status == 404)
-				jfaWarn(`The postpath: ${$url} could not be found `);
+				jfaWarn('The postpath: ' + $url + ' could not be found');
+			else {
+				jfaWarn('Something went wrong when posting!');
+			}
 		});
 	}//jfaPostData
 
@@ -259,7 +264,7 @@ function jfaSetHtml(){
 		$maxDate = ques.max || "01-01-2010";
 
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"date", id:ques.id, min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent);
+		$input = $('<input>', {type:"date", id:ques.id, placeholder:"04/07/1993", min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent).change(jfaCalendarKeyUpEvent);
 		$f.ansElements.push($numberDiv);
 		$ansDiv.append($input);
 	}
@@ -276,11 +281,22 @@ function jfaSetHtml(){
 
 	function updateProgressBar(){
 		$numDone = $(".next.ready").length;
-		$percentDone = 100*$numDone / $f.length;
-		$f.progressBarDiv.css('width',$percentDone + "%");
+		$f.percentDone = 100*$numDone / $f.length;
+		$f.progressBarDiv.css('width',$f.percentDone + "%");
 		$f.numberDoneElement.html($numDone);
 	}//updateProgressBar
 
+	function jfaGetHeaderHtml(){
+		$headDiv = $('<div>', {class:"header"});
+		$brand = $('<div>', {class:"brand"});
+		$logo = $('<img>', {class:"logo", src:$f.logoPath, alt:"Logo"});
+		$title = $('<div>', {class:"title", text:$f.title});
+
+		$brand.append($logo);
+		$headDiv.appendElements($brand, $title);
+		return $headDiv;
+
+	}
 	function jfaGetFooterHtml(){
 		$footDiv = $('<div>', {class:"footer"});
 		//progress
@@ -322,9 +338,18 @@ function jfaSetHtml(){
 		return $footDiv;
 
 	}//jfaGetFooterHtml
+
+	function jfaGetThanksHtml(){
+		$thanksDiv = $('<div>', {class:'thanks'});
+		$message = $('<h2>', {text:$f.thanks});
+		$thanksDiv.append($message);
+
+		return $thanksDiv;
+	}
+
 	function jfaGetSideBarHtml(){
 		$sideBarDiv = $('<div>', {class:'side-bar'});
-		$f.questions.forEach(ques => {
+		$f.questions.forEach(function(ques) {
 			$quesBar = $('<div>', {class:'ques-bar', 'data-ques':ques.id});
 			$circDiv = $('<div>', {class:'circ'});
 			$ques = $('<div>', {class:'ques', text:ques.question});
@@ -336,6 +361,7 @@ function jfaSetHtml(){
 
 		return $sideBarDiv;
 	}//jfaGetSideBarHtml()
+
 	//clickEvents
 	function jfaNextButtonClickEvent(){
 		if($f.currentQuestion < $f.length - 1)
@@ -345,16 +371,15 @@ function jfaSetHtml(){
 	}
 
 	function jfaSelectButtonClickEvent(){
-		console.log($thisQuestion);
 		var name = $(this).attr("name");
-		$(` button[name = ${name} ]`).removeClass("selected");
+		$('button[name=' + name + ']').removeClass("selected");
 		$(this).addClass("selected");
-		$(`select#${name}`).val($(this).val());
-		$curVal = $(`select[name = ${name} ]`).val();
-		$(` select#${$(this).attr("name")} `).val();
+		$('select#' + name).val($(this).val());
+		$curVal = $('select[name = ' + name + ']').val();
+		$('select#' + $(this).attr("name")).val();
 
-		$(`.next[data-name=${name}]`).addClass("ready");
-		$(`.ques-bar[data-ques= ${name} ]`).addClass("done");
+		$('.next[data-name='+name +']').addClass("ready");
+		$('.ques-bar[data-ques= '+ name + ']').addClass("done");
 
 		updateProgressBar();
 	}
@@ -372,36 +397,29 @@ function jfaSetHtml(){
 
 
 	//keyUpEvents
-	function jfaOnKeyUpEvent(){
+	function jfaOnKeyUpEvent(e){
+		console.log(e.keyCode);
 		var val = this.value;
 		var id = this.attributes.id.value;
 
 		if(val.length > 2){
-			$nextBut = $(`.next[data-name=${id}]`).addClass("ready");
-			$(`.ques-bar[data-ques=${id}]`).addClass("done");
+			$nextBut = $('.next[data-name='+ id + ']').addClass("ready");
+			$('.ques-bar[data-ques=' + id + ']').addClass("done");
 		} else {
-			$nextBut = $(`.next[data-name=${id}]`).removeClass("ready");
-			$(`.ques[data-ques=${id}]`).removeClass("done");
+			$nextBut = $('.next[data-name=' + id + ']').removeClass("ready");
+			$('.ques[data-ques= ' + id + ']').removeClass("done");
 
 		}
 		updateProgressBar();
 	}
 
-	function jfaNumberKeyUpEvent(){
-		var val = this.value;
-		var id = this.attributes.id.value;
-		if(val.length > 0){
-			$nextBut = $(`.next[data-name=${id}]`).addClass("ready");
-			$(`.ques-bar[data-ques=${id}]`).addClass("done");
-		} else {
-			$nextBut = $(`.next[data-name=${id}]`).removeClass("ready");
-			$(`.ques[data-ques=${id}]`).removeClass("done");
-
-		}
+	function jfaNumberKeyUpEvent(e){
+		jfaOnKeyUpEvent.call(this, e);
 
 	}//jfaNumberKeyUpEvent
-	function jfaCalendarKeyUpEvent(){
-		console.log(this.value);
+	function jfaCalendarKeyUpEvent(e){
+		jfaOnKeyUpEvent.call(this, e);
+
 	}//jfaCalendarKeyUpEvent
 	
 	//onChangeEvents
@@ -436,7 +454,7 @@ function jfaSetHtml(){
 	}
 
 	function jfaCheckItemInViewport(ques, index, items){
-		$questionContainer = $(`#${ques.id}`);
+		$questionContainer = $('#' + ques.id);
 		$curQues = $f.currentQuestion;
 		if($curQues != index && $questionContainer.inViewport()){	
 			$i = items[index];
@@ -461,13 +479,13 @@ function jfaSetHtml(){
 			
 			var allQuestions = "";
 
-			$f.questions.forEach((item, index, arr) => {
+			$f.questions.forEach(function(item, index, arr){
 				var completeQuestion = "";
-				completeQuestion += (`${index}:${item.question}`);
+				completeQuestion += (index + ':' + item.question);
 				if(values && item.values != undefined){
 					var t = "\tValues:\n\t\t";
 					item.values.forEach(function(item, index, arr){
-						t += (`${index}:${item.question}\t`);
+						t += (index + ':' + item.question + '\t');
 					});
 					
 					completeQuestion += t;
@@ -491,7 +509,7 @@ function jfaSetHtml(){
 
 	function jfaWarn(string){
 		
-		console.warn(`JfaForm: ${string}`);
+		console.warn('JfaForm: '+ string);
 		return;
 	}
 
@@ -523,6 +541,8 @@ $testForm = {
 		"nextButtonText" : "next",
 		"submitButtonText" : "Send It!",
 		"postPath" : "postit.php",
+		"logoPath" : "logo.png",
+		"title":"JFA Sign-up",
 		"questions":[
 		{
 			"id":"name",
