@@ -103,6 +103,7 @@
 					<div class="ques">Cheese4?</div>
 				</div>
 			</div>
+			<div class="thanks"><h2>Thanks for coming</h2></div>
 		</div> <!---/ .jfa-form -->
 	</div>
 	<script src="js/jquery-2.1.1.min.js"></script>
@@ -117,9 +118,12 @@
 			$(".jfa-form").addClass("open");
 			$("#is-student").focus();
 		}
-
+		$('.brand').click(function(){
+			$('.thanks').toggleClass('open');
+		});
+		var r = new jfaForm($testForm)
 	});
-	var r = new jfaForm($testForm)
+
 
 	</script>
 </body>

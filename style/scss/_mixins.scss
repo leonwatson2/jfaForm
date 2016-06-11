@@ -42,6 +42,11 @@
 
 }
 
+@mixin transition($transition){
+	transition: $transition;
+	-webkit-transition: $transition;
+}
+
 @mixin transform($rotate:0deg, 
 					$scale:1, 
 					$origin:center, 

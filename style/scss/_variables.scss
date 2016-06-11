@@ -14,6 +14,11 @@ $headerColor:inherit;
 $headerBackground:#2C6DB2;
 
 /*
+* Thanks screen
+*/
+$thanksBackground:transparentize(white, .7);
+
+/*
 * Buttons
 */
 $buttonBackground:transparentize($accentColor, .1);
@@ -25,6 +30,12 @@ $selectButtonBackground: #A4D0FF;
 $selectButtonColor: #111;
 $selectButtonChosenBackground: #FFC258;
 $selectButtonChosenColor: #111;
+
+/*
+* Next Button
+*/
+$nextButtonBackground:$buttonBackground;
+$nextButtonReadyBackground:$selectButtonChosenBackground;
 /*
 * Footer
 */

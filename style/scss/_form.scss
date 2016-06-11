@@ -7,7 +7,7 @@
 	position: absolute;
 	top:0;
 	left:110%;
-	transition:left 2s;
+	@include transition(left 2s);
 	&.open{
 		left:0;
 	}
@@ -27,11 +27,11 @@
 	.header{
 		height:$headerHeight;
 		width: 100%;
-		z-index:400;
+		z-index:500;
 		background:$headerBackground;
 		color:$headerColor;
 		position: fixed;
-		transition:.75s;
+		@include transition(.75s);
 		font-size: 1em;
 		@include flexBox($justify:space-between, $align-content:center);
 		
@@ -64,7 +64,7 @@
 			z-index:50;
 			opacity: .4;
 			
-			transition: opacity 1.2s;
+			@include transition( opacity 1.2s);
 			&:not(:last-of-type){
 				margin-bottom:30%;
 			}
@@ -87,6 +87,7 @@
 					border:dashed 2px $answerBorderColor;
 					
 					width: 80%;
+					min-height:40px;
 					margin-right: 20px;
 					padding:5px;
 					
@@ -110,7 +111,7 @@
 						color:$selectButtonColor;
 						border-radius: 4px;
 						border:none;
-						transition:all .75s;
+						@include transition(all .75s);
 						margin-right: 10px;
 					}
 					.btn-answer:focus{
@@ -127,7 +128,7 @@
 
 				span.next{
 					position: relative;
-					background: $buttonBackground;
+					background: $nextButtonBackground;
 					
 					display: inline-block;
 					margin-top: 15px;
@@ -136,6 +137,10 @@
 					border-radius: 4px;
 					
 					cursor:pointer;
+					@include transition(.75s);
+					&.ready{
+						background: $nextButtonReadyBackground;
+					}
 				}
 			}
 
@@ -165,7 +170,7 @@
 		background: $footerColor;
 		position: fixed;
 		bottom: 0;
-		z-index:100;
+		z-index:500;
 		
 		width: 100%;
 		height: $footerHeight;
@@ -193,6 +198,9 @@
 				background: $progressBarTotalColor;
 
 				transition-duration:$progressBarTransitionDur;
+				-webkit-transition-duration:$progressBarTransitionDur;
+
+
 				width: 1%;
 				height:100%;
 				border-radius: $progressBarRadius;
@@ -250,7 +258,7 @@
 			.ques-bar{
 				@include flexBox($align-items:center, $justify:flex-start);
 				opacity: 1;
-				transition: opacity 1.2s;
+				@include transition( opacity 1.2s);
 				&.done{
 					opacity: .4;
 				}
@@ -268,6 +276,25 @@
 				margin-bottom: 10px;
 			}//.ques-bar
 		}//.side-bar
+	}//@include screen(false, 'md')
+
+	.thanks{
+	    position: fixed;
+	    margin-top:$headerHeight;
+	    z-index: 400;
+	    top: 0%;
+	    left: 0%;
+		width: 100%;
+		height: 100%;
+		background:$thanksBackground;
+		@include flexBox($align-items:flex-start, $justify:center);
+		@include transform($scale:0, $origin:top left);
+		@include transition(1.75s ease-out);
+		&.open{
+			@include transform($scale:1);
+			top:0;
+			left:0;
+		}
 	}
 
 }//.jfa-form
