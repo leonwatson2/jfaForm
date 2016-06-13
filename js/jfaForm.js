@@ -63,7 +63,13 @@ function jfaMakeActiveQuestion(num){
 	$('.item').removeClass('active');
 	$ques = this.quesElements[num];
 	$ques.addClass('active');
-	console.log($ques);
+	$nextInput = $ques.find('input, select').first();
+	if(!$nextInput.is('select'))
+		$nextInput.focus();
+	else {
+		$nextInput.parent().children('.btn-answer').focus();
+	}
+	
 }
 
 function jfaSetHtml(){
@@ -149,7 +155,6 @@ function jfaSetHtml(){
 		this.ansElements.forEach(function(item){
 			data[item[0].id] = item.val();
 		});
-		console.log(data);
 
 		$url = this.postPath;
 
@@ -229,9 +234,10 @@ function jfaSetHtml(){
 		createAndAppendStructure(ques);
 
 		
-		
-		$ansDiv.append($nextBut)
-		$ansDiv.append($pressEnterPrompt);
+		if($f.length != $thisQuestion.num){
+			$ansDiv.append($nextBut)
+		}
+			$ansDiv.append($pressEnterPrompt);
 
 
 		$thisQuestion.append($ansDiv);
@@ -413,7 +419,6 @@ function jfaSetHtml(){
 
 	//clickEvents
 	function jfaNextButtonClickEvent(e){
-		console.log(e);
 		if((e.type == "keyup" && e.keyCode == 13) || e.type == "click"){ 
 			if($f.currentQuestion < $f.length - 1)
 				$f.currentQuestion++;
@@ -452,13 +457,15 @@ function jfaSetHtml(){
 	function jfaOnKeyUpEvent(e){
 		var val = this.value;
 		var id = this.attributes.id.value;
-		var num = this.attributes[2].value;
+		var num = this.attributes['data-num'].value;
 		if(val.length > 2){
 			$('.next[data-name='+ id + ']').addClass("ready");
 			$('.jfa-enter[data-num='+ num + ']').addClass("ready");
 			$('.ques-bar[data-ques=' + id + ']').addClass("done");
 			if(e.keyCode == 13){
-				if($f.currentQuestion < $f.length - 1)
+				if(num == $f.length) 
+					jfaSubmit.call($f);					
+				else if($f.currentQuestion < $f.length - 1)
 						$f.currentQuestion++;
 					$f.goToQuestion(parseInt(num));
 			}
