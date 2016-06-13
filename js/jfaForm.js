@@ -216,6 +216,8 @@ function jfaSetHtml(){
 	function createAndAppendStructure(ques){
 
 		switch(ques.inputType){
+			case "email": emailInputStructure(ques);
+			break;
 			case "text" : textInputStructure(ques);
 			break;
 			case "select": selectInputStructure(ques);
@@ -227,6 +229,13 @@ function jfaSetHtml(){
 		}
 
 	}
+	function emailInputStructure(ques){
+		$thisQuestion.element.ans = 
+		$input = $('<input>', {type:"email", id:ques.id}).keyup(jfaOnKeyUpEvent);
+		$ansDiv.append($input);
+		$f.ansElements.push($input);
+	}
+
 	function textInputStructure(ques){
 		$thisQuestion.element.ans = 
 		$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent);
@@ -265,7 +274,7 @@ function jfaSetHtml(){
 
 		$thisQuestion.element.ans = 
 		$input = $('<input>', {type:"date", id:ques.id, placeholder:"04/07/1993", min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent).change(jfaCalendarKeyUpEvent);
-		$f.ansElements.push($numberDiv);
+		$f.ansElements.push($input);
 		$ansDiv.append($input);
 	}
 	function numberInputStructure(ques){
@@ -546,7 +555,7 @@ $testForm = {
 		"questions":[
 		{
 			"id":"name",
-			"question":"What's your name?",
+			"question":"What do you go by?",
 			"boolean":false,
 			"required":true,
 			"inputType":"text",
