@@ -37,10 +37,10 @@
 		
 		.brand{
 			margin-left: 20px;
-			height: 80%;
+			height: 100%;
 			@include flexBox($align-items:center);
 			.logo{
-				height: 80%; 
+				height: 100%; 
 
 			}
 		}
@@ -116,6 +116,7 @@
 					}
 					.btn-answer:focus{
 						outline:transparent;
+						background:$selectButtonChosenBackground;
 					}
 					
 					.btn-answer.selected{
@@ -152,6 +153,20 @@
 			}
 			.num:after{
 				content: '.';
+			}
+			.jfa-enter{
+		    	opacity:0; 
+				font-size: .75em;
+				position: relative;
+			    left: 10%;
+			    top: 10px;
+			    small{
+			    	opacity: .25;
+			    }
+			    &.ready{
+			    	@include transition(2s);
+			    	opacity:1; 
+			    }
 			}
 			
 		} //li.item

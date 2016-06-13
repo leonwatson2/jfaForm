@@ -2491,7 +2491,7 @@ body {
     flex-direction: row; }
     .jfa-form .header .brand {
       margin-left: 20px;
-      height: 80%;
+      height: 100%;
       display: -ms-flexbox;
       display: -moz-box;
       display: -webkit-box;
@@ -2513,7 +2513,7 @@ body {
       -webkit-flex-direction: row;
       flex-direction: row; }
       .jfa-form .header .brand .logo {
-        height: 80%; }
+        height: 100%; }
     .jfa-form .header .title {
       margin-right: 20px; }
     .jfa-form .header.mini {
@@ -2564,7 +2564,8 @@ body {
           -webkit-transition: all 0.75s;
           margin-right: 10px; }
         .jfa-form ul.questions li.item .answer.select .btn-answer:focus {
-          outline: transparent; }
+          outline: transparent;
+          background: #FFC258; }
         .jfa-form ul.questions li.item .answer.select .btn-answer.selected {
           background: #FFC258;
           color: #111;
@@ -2592,6 +2593,18 @@ body {
         text-align: left; }
       .jfa-form ul.questions li.item .num:after {
         content: '.'; }
+      .jfa-form ul.questions li.item .jfa-enter {
+        opacity: 0;
+        font-size: .75em;
+        position: relative;
+        left: 10%;
+        top: 10px; }
+        .jfa-form ul.questions li.item .jfa-enter small {
+          opacity: .25; }
+        .jfa-form ul.questions li.item .jfa-enter.ready {
+          transition: 2s;
+          -webkit-transition: 2s;
+          opacity: 1; }
   .jfa-form .submit {
     margin-left: 40px;
     margin-bottom: 280px;
