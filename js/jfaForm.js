@@ -20,6 +20,7 @@ function jfaForm($f){
 		this.postPath = $f.postPath;
 		this.post = jfaPostData;
 		this.length = $f.questions.length;
+		this.resetDelay = $f.resetDelay || 10;
 		this.print = jfaPrint;
 		this.init = jfaSetHtml;
 		this.quesElements = [];
@@ -108,16 +109,15 @@ function jfaSetHtml(){
 
 	function jfaSubmit(){
 		$f = this;
-		this.required.forEach(function(item){
+		this.required.forEach(function(item, $f){
 			if(item.element.ans.val() != "")
-			console.log(item);
+				;
 		})
 
 		this.quesElements.forEach(function(item, index){
 			jfaValidateInput.call($f, item, index);
 		});
 		if(this.valid){
-		console.log("Here");
 			this.post();
 		}
 
@@ -152,13 +152,33 @@ function jfaSetHtml(){
 
 		$url = this.postPath;
 
-		$.post($url, data, function (data){
-			$("#" + $f.id + " .thanks").addClass('open');
-		}).fail(function(d){
+		$.post($url, data, function (r){
+
+			if(r.status == 'success'){
+				function reset(){
+					jfaReset.call($f);
+				}
+				console.log($f.thanks);
+				if(typeof $f.thanks == "string")
+					$message = $f.thanks;
+				else
+					$message = $f.thanks[Math.floor(Math.random()*$f.thanks.length)];
+
+				$("#" + $f.id + " .thanks .message").html($message);
+				$("#" + $f.id + " .thanks").addClass('open');
+				console.log($f.resetDelay);
+				setTimeout(reset, $f.resetDelay*1000);
+			}else{
+				jfaWarn("Database problem: " + r.reason);
+			}
+		},"json")
+
+		.fail(function(d){
+			console.log(d);
 			if(d.status == 404)
 				jfaWarn('The postpath: ' + $url + ' could not be found');
 			else {
-				jfaWarn('Something went wrong when posting!');
+				jfaWarn('Something went wrong when posting!  ' + d.status);
 			}
 		});
 	}//jfaPostData
@@ -231,14 +251,14 @@ function jfaSetHtml(){
 	}
 	function emailInputStructure(ques){
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"email", id:ques.id}).keyup(jfaOnKeyUpEvent);
+		$input = $('<input>', {type:"email", id:ques.id}).keyup(jfaOnKeyUpEvent).change(jfaOnKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
 
 	function textInputStructure(ques){
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent);
+		$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent).change(jfaOnKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
@@ -273,9 +293,9 @@ function jfaSetHtml(){
 		$maxDate = ques.max || "01-01-2010";
 
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"date", id:ques.id, placeholder:"04/07/1993", min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent).change(jfaCalendarKeyUpEvent);
-		$f.ansElements.push($input);
-		$ansDiv.append($input);
+		$dateDiv = $('<input>', {type:"date", id:ques.id, placeholder:"04/07/1993", min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent).change(jfaCalendarKeyUpEvent);
+		$f.ansElements.push($dateDiv);
+		$ansDiv.append($dateDiv);
 	}
 	function numberInputStructure(ques){
 		$minNum = ques.min || "";
@@ -350,7 +370,7 @@ function jfaSetHtml(){
 
 	function jfaGetThanksHtml(){
 		$thanksDiv = $('<div>', {class:'thanks'});
-		$message = $('<h2>', {text:$f.thanks});
+		$message = $('<h2>', {class:'message'});
 		$thanksDiv.append($message);
 
 		return $thanksDiv;
@@ -395,7 +415,6 @@ function jfaSetHtml(){
 
 	function jfaNavButtonClickEvent(event){
 		var direction = event.data;
-		console.log(direction);
 		if(direction == "up" && $f.currentQuestion != 0)
 			$f.goToQuestion(--$f.currentQuestion);
 		else if(direction == "down" && $f.currentQuestion != $f.length - 1)
@@ -407,7 +426,6 @@ function jfaSetHtml(){
 
 	//keyUpEvents
 	function jfaOnKeyUpEvent(e){
-		console.log(e.keyCode);
 		var val = this.value;
 		var id = this.attributes.id.value;
 
@@ -514,12 +532,28 @@ function jfaSetHtml(){
 			
 		}
 		jfaWarn("The '" + type + "' property was not found");
-	}
+	}//print
 
 	function jfaWarn(string){
 		
 		console.warn('JfaForm: '+ string);
 		return;
+	}//jfaWarn
+
+	function jfaReset(){
+		$elements = {
+			".select .btn-answer.selected" : "selected", 
+			".next.ready" : "ready"
+		};
+		$.each($elements, function(key, value){
+			$(key).removeClass(value);
+		});
+		updateProgressBar();
+		$("#" + this.id + " input").val("");
+		$("#" + this.id + " .thanks").removeClass('open');
+		$('#'+ this.id).animate({
+			scrollTop : 0
+		}, 1000);
 	}
 
 //outsourced
@@ -605,6 +639,3 @@ $testForm = {
 	"thanks":"Thank you for cheking in with us! Go Flow!"
 
 }//testForm object
-
-
-
