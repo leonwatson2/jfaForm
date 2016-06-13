@@ -63,6 +63,7 @@ function jfaMakeActiveQuestion(num){
 	$('.item').removeClass('active');
 	$ques = this.quesElements[num];
 	$ques.addClass('active');
+	console.log($ques);
 }
 
 function jfaSetHtml(){
@@ -195,7 +196,7 @@ function jfaSetHtml(){
 		$thisQuestion = $f.quesElements[index] = $('<li>', {class:$classes, "data-ques":ques.id});
 		$thisQuestion.element = {};
 
-		$thisQuestion.num = index + 1;
+		$thisQuestion.num = ques.num = index + 1;
 		$num = $('<div>', {class:"num"})
 				.html($thisQuestion.num);
 
@@ -211,10 +212,13 @@ function jfaSetHtml(){
 
 		$thisQuestion.element.nextButton 
 			= $nextBut 
-			= $('<span>', {class:"next", 'data-num':$thisQuestion.num, 'data-name':ques.id, 'tabindex':0})
+			= $('<span>', {class:"next", 'data-num':ques.num, 'data-name':ques.id, 'tabindex':0})
 				.keypress(jfaNextButtonKeyPress)
 				.html($f.nextButtonText)
-				.click(jfaNextButtonClickEvent);
+				.click(jfaNextButtonClickEvent)
+				.keyup(jfaNextButtonClickEvent);
+		$pressEnterPrompt = $('<div>', {class:'jfa-enter', 'data-num':ques.num})
+				.html('<small>press</small> Enter');
 
 		
 		$thisQuestion.appendElements($num, $question);
@@ -226,8 +230,8 @@ function jfaSetHtml(){
 
 		
 		
-		
 		$ansDiv.append($nextBut)
+		$ansDiv.append($pressEnterPrompt);
 
 
 		$thisQuestion.append($ansDiv);
@@ -251,14 +255,18 @@ function jfaSetHtml(){
 	}
 	function emailInputStructure(ques){
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"email", id:ques.id}).keyup(jfaOnKeyUpEvent).change(jfaOnKeyUpEvent);
+		$input = $('<input>', {type:"email", id:ques.id, 'data-num':ques.num})
+				.keyup(jfaOnKeyUpEvent)
+				.change(jfaOnKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
 
 	function textInputStructure(ques){
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"text", id:ques.id}).keyup(jfaOnKeyUpEvent).change(jfaOnKeyUpEvent);
+		$input = $('<input>', {type:"text", id:ques.id, 'data-num':ques.num})
+				.keyup(jfaOnKeyUpEvent)
+				.change(jfaOnKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
@@ -267,14 +275,23 @@ function jfaSetHtml(){
 		$ansDiv.addClass("select");
 
 		$thisQuestion.element.ans = 
-		$selectDiv = $('<select>', {name:ques.id, id: ques.id, tabindex:-1}).change(jfaSelectOnChangeEvent);
+		$selectDiv = $('<select>', {name:ques.id, id: ques.id, 'data-num':ques.num, tabindex:-1})
+				.keyup(jfaOnKeyUpEvent)
+				.change(jfaSelectOnChangeEvent);
 		$f.ansElements.push($selectDiv);	
 			ques.values.forEach(function(ans, index, arr){
 				
 				$classes = "btn-answer";
 
-				$btnAnswer = $('<button>', {name:ques.id, class: $classes, value:ans})
-									.click(jfaSelectButtonClickEvent);
+				$btnAnswer = $('<button>', {name:ques.id, class: $classes,'data-num':ques.num, value:ans})
+									.click(jfaSelectButtonClickEvent).on('keyup', function(e){
+					if($(this).hasClass('selected') && e.keyCode == 13){
+						num = this.attributes[2].value;
+						if($f.currentQuestion < $f.length - 1)
+							$f.currentQuestion++;
+						$f.goToQuestion(parseInt(num));
+					}
+				});
 				$option = $('<option>', {value:ans});
 
 
@@ -293,7 +310,9 @@ function jfaSetHtml(){
 		$maxDate = ques.max || "01-01-2010";
 
 		$thisQuestion.element.ans = 
-		$dateDiv = $('<input>', {type:"date", id:ques.id, placeholder:"04/07/1993", min:$minDate, max:$maxDate}).keyup(jfaCalendarKeyUpEvent).change(jfaCalendarKeyUpEvent);
+		$dateDiv = $('<input>', {type:"date", id:ques.id, 'data-num':ques.num, placeholder:"04/07/1993", min:$minDate, max:$maxDate})
+						.keyup(jfaCalendarKeyUpEvent)
+						.change(jfaCalendarKeyUpEvent);
 		$f.ansElements.push($dateDiv);
 		$ansDiv.append($dateDiv);
 	}
@@ -302,7 +321,8 @@ function jfaSetHtml(){
 		$maxNum = ques.max || "";
 
 		$thisQuestion.element.ans = 
-		$numberDiv = $('<input>', {id:ques.id, type:'number'}).keyup(jfaNumberKeyUpEvent);
+		$numberDiv = $('<input>', {id:ques.id, 'data-num':ques.num, type:'number'})
+						.keyup(jfaNumberKeyUpEvent);
 		$f.ansElements.push($numberDiv);
 
 		$ansDiv.append($numberDiv);
@@ -392,11 +412,14 @@ function jfaSetHtml(){
 	}//jfaGetSideBarHtml()
 
 	//clickEvents
-	function jfaNextButtonClickEvent(){
-		if($f.currentQuestion < $f.length - 1)
-			$f.currentQuestion++;
-		$f.goToQuestion(parseInt($(this).attr('data-num')));
-		updateProgressBar();
+	function jfaNextButtonClickEvent(e){
+		console.log(e);
+		if((e.type == "keyup" && e.keyCode == 13) || e.type == "click"){ 
+			if($f.currentQuestion < $f.length - 1)
+				$f.currentQuestion++;
+			$f.goToQuestion(parseInt($(this).attr('data-num')));
+			updateProgressBar();
+		}
 	}
 
 	function jfaSelectButtonClickEvent(){
@@ -409,6 +432,7 @@ function jfaSetHtml(){
 
 		$('.next[data-name='+name +']').addClass("ready");
 		$('.ques-bar[data-ques= '+ name + ']').addClass("done");
+		$('.jfa-enter[data-name= '+ name + ']').addClass("ready");
 
 		updateProgressBar();
 	}
@@ -428,12 +452,19 @@ function jfaSetHtml(){
 	function jfaOnKeyUpEvent(e){
 		var val = this.value;
 		var id = this.attributes.id.value;
-
+		var num = this.attributes[2].value;
 		if(val.length > 2){
-			$nextBut = $('.next[data-name='+ id + ']').addClass("ready");
+			$('.next[data-name='+ id + ']').addClass("ready");
+			$('.jfa-enter[data-num='+ num + ']').addClass("ready");
 			$('.ques-bar[data-ques=' + id + ']').addClass("done");
+			if(e.keyCode == 13){
+				if($f.currentQuestion < $f.length - 1)
+						$f.currentQuestion++;
+					$f.goToQuestion(parseInt(num));
+			}
 		} else {
-			$nextBut = $('.next[data-name=' + id + ']').removeClass("ready");
+			$('.next[data-name=' + id + ']').removeClass("ready");
+			$('.jfa-enter[data-num=' + num + ']').removeClass("ready");
 			$('.ques[data-ques= ' + id + ']').removeClass("done");
 
 		}
@@ -451,7 +482,7 @@ function jfaSetHtml(){
 	
 	//onChangeEvents
 	function jfaSelectOnChangeEvent(){
-				
+		
 
 	}//jfaSelectOnChangeEvent
 
