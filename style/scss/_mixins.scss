@@ -48,7 +48,10 @@
 }
 
 @mixin transform($rotate:0deg, 
-					$scale:1, 
+					$scale:1,
+					$translateX:0, 
+					$translateY:0, 
+					$translateZ:0, 
 					$origin:center, 
 					$rotateX:null,
 					$rotateY:null,
@@ -59,11 +62,11 @@
 					){
 		
 
-	 -ms-transform: rotate($rotate) scale($scale);
+	 -ms-transform: rotate($rotate) scale($scale) translateX($translateX) translateY($translateY) translateZ($translateZ);
     -ms-transform-origin: $origin;
-    -webkit-transform: rotate($rotate) scale($scale); 
+    -webkit-transform: rotate($rotate) scale($scale) translateX($translateX) translateY($translateY) translateZ($translateZ); 
     -webkit-transform-origin: $origin; 
-    transform: rotate($rotate) scale($scale);
+    transform: rotate($rotate) scale($scale) translateX($translateX) translateY($translateY) translateZ($translateZ);
 
 }
 @mixin animateLeft($name, $perc){

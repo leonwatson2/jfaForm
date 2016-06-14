@@ -2363,41 +2363,41 @@ th {
 
 @-webkit-keyframes shakeAndGrow {
   0% {
-    -ms-transform: rotate(-30deg) scale(1);
+    -ms-transform: rotate(-30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: center;
-    -webkit-transform: rotate(-30deg) scale(1);
+    -webkit-transform: rotate(-30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: center;
-    transform: rotate(-30deg) scale(1); }
+    transform: rotate(-30deg) scale(1) translateX(0) translateY(0) translateZ(0); }
   36% {
-    -ms-transform: rotate(30deg) scale(1);
+    -ms-transform: rotate(30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: center;
-    -webkit-transform: rotate(30deg) scale(1);
+    -webkit-transform: rotate(30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: center;
-    transform: rotate(30deg) scale(1); }
+    transform: rotate(30deg) scale(1) translateX(0) translateY(0) translateZ(0); }
   54% {
-    -ms-transform: rotate(-30deg) scale(1);
+    -ms-transform: rotate(-30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: center;
-    -webkit-transform: rotate(-30deg) scale(1);
+    -webkit-transform: rotate(-30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: center;
-    transform: rotate(-30deg) scale(1); }
+    transform: rotate(-30deg) scale(1) translateX(0) translateY(0) translateZ(0); }
   72% {
-    -ms-transform: rotate(30deg) scale(1);
+    -ms-transform: rotate(30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: center;
-    -webkit-transform: rotate(30deg) scale(1);
+    -webkit-transform: rotate(30deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: center;
-    transform: rotate(30deg) scale(1); }
+    transform: rotate(30deg) scale(1) translateX(0) translateY(0) translateZ(0); }
   90% {
-    -ms-transform: rotate(0deg) scale(1);
+    -ms-transform: rotate(0deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: center;
-    -webkit-transform: rotate(0deg) scale(1);
+    -webkit-transform: rotate(0deg) scale(1) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: center;
-    transform: rotate(0deg) scale(1); }
+    transform: rotate(0deg) scale(1) translateX(0) translateY(0) translateZ(0); }
   100% {
-    -ms-transform: rotate(0deg) scale(1.2);
+    -ms-transform: rotate(0deg) scale(1.2) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: center;
-    -webkit-transform: rotate(0deg) scale(1.2);
+    -webkit-transform: rotate(0deg) scale(1.2) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: center;
-    transform: rotate(0deg) scale(1.2); } }
+    transform: rotate(0deg) scale(1.2) translateX(0) translateY(0) translateZ(0); } }
 body {
   overflow: hidden; }
 
@@ -2550,30 +2550,33 @@ body {
           padding: 5px; }
           .jfa-form ul.questions li.item .answer input:focus {
             outline: none; }
-        .jfa-form ul.questions li.item .answer select {
+        .jfa-form ul.questions li.item .answer select, .jfa-form ul.questions li.item .answer input[type="checkbox"] {
           position: absolute;
           left: -10pc;
           z-index: -200;
           opacity: 0; }
-        .jfa-form ul.questions li.item .answer.select .btn-answer {
+        .jfa-form ul.questions li.item .answer.select .btn-answer, .jfa-form ul.questions li.item .answer.choose .btn-answer {
           background: #A4D0FF;
           color: #111;
+          padding: 0;
           border-radius: 4px;
           border: none;
           transition: all 0.75s;
           -webkit-transition: all 0.75s;
           margin-right: 10px; }
-        .jfa-form ul.questions li.item .answer.select .btn-answer:focus {
+          .jfa-form ul.questions li.item .answer.select .btn-answer span, .jfa-form ul.questions li.item .answer.choose .btn-answer span {
+            padding: 2px 6px; }
+        .jfa-form ul.questions li.item .answer.select .btn-answer:focus, .jfa-form ul.questions li.item .answer.choose .btn-answer:focus {
           outline: transparent;
           background: #FFC258; }
-        .jfa-form ul.questions li.item .answer.select .btn-answer.selected {
+        .jfa-form ul.questions li.item .answer.select .btn-answer.selected, .jfa-form ul.questions li.item .answer.choose .btn-answer.selected {
           background: #FFC258;
           color: #111;
-          -ms-transform: rotate(0deg) scale(1.2);
+          -ms-transform: rotate(0deg) scale(1) translateX(0) translateY(-5px) translateZ(0);
           -ms-transform-origin: center;
-          -webkit-transform: rotate(0deg) scale(1.2);
+          -webkit-transform: rotate(0deg) scale(1) translateX(0) translateY(-5px) translateZ(0);
           -webkit-transform-origin: center;
-          transform: rotate(0deg) scale(1.2); }
+          transform: rotate(0deg) scale(1) translateX(0) translateY(-5px) translateZ(0); }
         .jfa-form ul.questions li.item .answer span.next {
           position: relative;
           background: rgba(88, 169, 255, 0.9);
@@ -2732,19 +2735,19 @@ body {
     align-items: flex-start;
     -webkit-flex-direction: row;
     flex-direction: row;
-    -ms-transform: rotate(0deg) scale(0);
+    -ms-transform: rotate(0deg) scale(0) translateX(0) translateY(0) translateZ(0);
     -ms-transform-origin: top left;
-    -webkit-transform: rotate(0deg) scale(0);
+    -webkit-transform: rotate(0deg) scale(0) translateX(0) translateY(0) translateZ(0);
     -webkit-transform-origin: top left;
-    transform: rotate(0deg) scale(0);
+    transform: rotate(0deg) scale(0) translateX(0) translateY(0) translateZ(0);
     transition: 1.75s ease-out;
     -webkit-transition: 1.75s ease-out; }
     .jfa-form .thanks.open {
-      -ms-transform: rotate(0deg) scale(1);
+      -ms-transform: rotate(0deg) scale(1) translateX(0) translateY(0) translateZ(0);
       -ms-transform-origin: center;
-      -webkit-transform: rotate(0deg) scale(1);
+      -webkit-transform: rotate(0deg) scale(1) translateX(0) translateY(0) translateZ(0);
       -webkit-transform-origin: center;
-      transform: rotate(0deg) scale(1);
+      transform: rotate(0deg) scale(1) translateX(0) translateY(0) translateZ(0);
       top: 0;
       left: 0; }
 
