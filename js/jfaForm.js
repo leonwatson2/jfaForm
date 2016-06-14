@@ -48,11 +48,11 @@ function jfaGoToQuestion(num){
 	num = num != undefined ? num : this.currentQuestion;
 	 	
 	if(num != this.length ){
-		jfaMakeActiveQuestion.call(this, num);
 		$curScroll = $('#'+ this.id).scrollTop();
 		$('#'+ this.id).animate({
 			scrollTop : $curScroll + this.quesElements[num].offset().top - 100
 		}, 1000);
+		jfaMakeActiveQuestion.call(this, num);
 	}
 	
 
@@ -256,23 +256,28 @@ function jfaSetHtml(){
 			break;
 			case "number": numberInputStructure(ques);
 			break;
+			case "checkbox" : checkboxInputStructure(ques);
+			break;
 		}
 
 	}
 	function emailInputStructure(ques){
+		$emailInputAtr = {type:"email", id:ques.id, 'data-num':ques.num};
+
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"email", id:ques.id, 'data-num':ques.num})
-				.keyup(jfaOnKeyUpEvent)
-				.change(jfaOnKeyUpEvent);
+		$input = $('<input>', $emailInputAtr)
+				.keyup(jfaKeyUpEvent)
+				.change(jfaKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
 
 	function textInputStructure(ques){
+		$textInputAtr = {type:"text", id:ques.id, 'data-num':ques.num};
 		$thisQuestion.element.ans = 
-		$input = $('<input>', {type:"text", id:ques.id, 'data-num':ques.num})
-				.keyup(jfaOnKeyUpEvent)
-				.change(jfaOnKeyUpEvent);
+		$input = $('<input>', $textInputAtr)
+				.keyup(jfaKeyUpEvent)
+				.change(jfaKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
@@ -282,7 +287,7 @@ function jfaSetHtml(){
 
 		$thisQuestion.element.ans = 
 		$selectDiv = $('<select>', {name:ques.id, id: ques.id, 'data-num':ques.num, tabindex:-1})
-				.keyup(jfaOnKeyUpEvent)
+				.keyup(jfaKeyUpEvent)
 				.change(jfaSelectOnChangeEvent);
 		$f.ansElements.push($selectDiv);	
 			ques.values.forEach(function(ans, index, arr){
@@ -290,19 +295,13 @@ function jfaSetHtml(){
 				$classes = "btn-answer";
 
 				$btnAnswer = $('<button>', {name:ques.id, class: $classes,'data-num':ques.num, value:ans})
-									.click(jfaSelectButtonClickEvent).on('keyup', function(e){
-					if($(this).hasClass('selected') && e.keyCode == 13){
-						num = this.attributes[2].value;
-						if($f.currentQuestion < $f.length - 1)
-							$f.currentQuestion++;
-						$f.goToQuestion(parseInt(num));
-					}
-				});
+									.click(jfaSelectButtonClickEvent)
+									.on('keyup', jfaSelectButtonKeyUpEvent);
 				$option = $('<option>', {value:ans});
 
 
-
-				$btnAnswer.html(ans);
+				$labelSpan = $('<span>', {text:ans}); 
+				$btnAnswer.append($labelSpan);
 				$option.html(ans);
 
 				$selectDiv.append($option);
@@ -310,6 +309,41 @@ function jfaSetHtml(){
 				$ansDiv.append($selectDiv);
 			});
 
+	}
+	function checkboxInputStructure(ques){
+		$ansDiv.addClass("select");
+
+			ques.values.forEach(function(ans, index, arr){
+				$id = (index == 0) ? ques.id : ques.id + index;
+				$checkboxAtr = {
+								name:ques.id, 
+								id: $id, 
+								'data-num':ques.num, 
+								tabindex:-1, 
+								type:'checkbox', 
+								value:ans
+							};
+				$checkboxEle = $('<input>', $checkboxAtr)
+						.keyup(jfaCheckboxKeyUpEvent)
+						.change(jfaCheckboxChangeEvent);
+
+				$label = $('<label>', {'for': $id});
+
+				$classes = "btn-answer";
+				$btnAnswerAtr = {name:ques.id, class: $classes,'data-num':ques.num};
+				$btnAnswer = $('<button>', $btnAnswerAtr)
+									.click(jfaCheckboxButtonClickEvent)
+									.keyup(jfaCheckboxButtonKeyUpEvent);
+				
+
+
+				$btnAnswer.appendElements($label);
+
+				$label.html(ans);
+
+				$ansDiv.append($btnAnswer);
+				$ansDiv.append($checkboxEle);
+			});
 	}
 	function dateInputStructure(ques){
 		$minDate = ques.min || "01-01-1930";
@@ -431,15 +465,23 @@ function jfaSetHtml(){
 		var name = $(this).attr("name");
 		$('button[name=' + name + ']').removeClass("selected");
 		$(this).addClass("selected");
+		
 		$('select#' + name).val($(this).val());
-		$curVal = $('select[name = ' + name + ']').val();
 		$('select#' + $(this).attr("name")).val();
 
-		$('.next[data-name='+name +']').addClass("ready");
+		$('.next[data-name='+ name +']').addClass("ready");
 		$('.ques-bar[data-ques= '+ name + ']').addClass("done");
 		$('.jfa-enter[data-name= '+ name + ']').addClass("ready");
 
 		updateProgressBar();
+	}
+	function jfaCheckboxButtonClickEvent(){
+		var name = $(this).attr('name');
+		$(this).toggleClass('selected');
+
+		$('.next[data-name='+ name +']').addClass("ready");
+		$('.ques-bar[data-ques= '+ name + ']').addClass("done");
+		$('.jfa-enter[data-name= '+ name + ']').addClass("ready");
 	}
 
 	function jfaNavButtonClickEvent(event){
@@ -454,7 +496,7 @@ function jfaSetHtml(){
 
 
 	//keyUpEvents
-	function jfaOnKeyUpEvent(e){
+	function jfaKeyUpEvent(e){
 		var val = this.value;
 		var id = this.attributes.id.value;
 		var num = this.attributes['data-num'].value;
@@ -479,21 +521,43 @@ function jfaSetHtml(){
 	}
 
 	function jfaNumberKeyUpEvent(e){
-		jfaOnKeyUpEvent.call(this, e);
+		jfaKeyUpEvent.call(this, e);
 
 	}//jfaNumberKeyUpEvent
 	function jfaCalendarKeyUpEvent(e){
-		jfaOnKeyUpEvent.call(this, e);
+		jfaKeyUpEvent.call(this, e);
 
 	}//jfaCalendarKeyUpEvent
+
+	function jfaCheckboxKeyUpEvent(e){
+		console.log(e);
+	}
 	
+	function jfaSelectButtonKeyUpEvent(e){
+		if($(this).hasClass('selected') && e.keyCode == 13){
+			num = this.attributes[2].value;
+			if(num == $f.length) jfaSubmit.call($f);
+			if($f.currentQuestion < $f.length - 1)
+				$f.currentQuestion++;
+			$f.goToQuestion(parseInt(num));
+		}
+	}
+	function jfaCheckboxButtonKeyUpEvent(e){
+		console.log(e.keyCode);
+		switch(e.keyCode){
+			case 13:console.log("13");
+		}
+	}
+
 	//onChangeEvents
 	function jfaSelectOnChangeEvent(){
 		
 
 	}//jfaSelectOnChangeEvent
 
-
+	function jfaCheckboxChangeEvent(){
+		
+	}
 
 	//onkeypress
 	function jfaNextButtonKeyPress(){
@@ -581,7 +645,9 @@ function jfaSetHtml(){
 	function jfaReset(){
 		$elements = {
 			".select .btn-answer.selected" : "selected", 
-			".next.ready" : "ready"
+			".ready" : "ready",
+			".selected" : "selected",
+			".done" : "done"
 		};
 		$.each($elements, function(key, value){
 			$(key).removeClass(value);
@@ -628,9 +694,10 @@ $testForm = {
 		{
 			"id":"name",
 			"question":"What do you go by?",
+			"values":["Him", "She", "It", "Them", "Tim"],
 			"boolean":false,
 			"required":true,
-			"inputType":"text",
+			"inputType":"checkbox",
 		},
 		{
 			"id":"is-Student",
