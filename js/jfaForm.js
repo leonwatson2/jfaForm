@@ -1,4 +1,10 @@
 
+/*
+	*	Throughout the code the jfaForm object 
+	* 	is referended as $f 
+	*	
+	**/	
+
 function jfaForm($f){
 	//add side bar 
 	//add next on enter
@@ -44,6 +50,11 @@ function jfaForm($f){
 
 
 //visual
+
+/*
+	*	Scrolls to question with the index of the number passed in
+	*	Parameters: num
+	**/	
 function jfaGoToQuestion(num){
 	num = num != undefined ? num : this.currentQuestion;
 	 	
@@ -57,7 +68,12 @@ function jfaGoToQuestion(num){
 	
 
 }
-
+/*
+	*	Changes the current active question; 
+	*	adds corresponding classes; and focuses on input
+	*   all according to the passed in number
+	*	Parameters: num
+	**/	
 function jfaMakeActiveQuestion(num){
 
 	$('.item').removeClass('active');
@@ -71,7 +87,12 @@ function jfaMakeActiveQuestion(num){
 	}
 	
 }
-
+/*
+	*	Create the HTML structure of the jfaForm 
+	*	and added it to the document according to 
+	*   the id specified
+	*	
+	**/	
 function jfaSetHtml(){
 	$f = this;
 	$container = $('#' + $f.id);
@@ -109,13 +130,15 @@ function jfaSetHtml(){
 
 		jfaScrollEvent();
 	}//jfaSetHtml
-	function jfainit(){
-		jfaSetHtml();
-		jfaScrollEvent();
-	}//jfainit
 
+	/*
+		*	Validates input before submitting the 
+		*	the answers via post.
+		*	
+		**/	
 	function jfaSubmit(){
 		$f = this;
+		//validation not yet implemented
 		this.required.forEach(function(item, $f){
 			if(item.element.ans.val() != "")
 				;
@@ -130,10 +153,10 @@ function jfaSetHtml(){
 
 	}//jfaSubmit
 
+	//validation of a single input
 	function jfaValidateInput(item, index){
 		$question = item.element.question.html();
-		$ans = item.element.ans.val();
-			
+		$ans = item.element;
 		// validation happens
 
 		
@@ -148,18 +171,35 @@ function jfaSetHtml(){
 
 	}//jfaValildateInput
 
+	/*
+		*	call jQueries ajax function post and post input
+		*	to a specified file. If successful shows thank you screen
+		*	and if not throws an warning to the console. 
+		* 	The ajax function expects json to be returned.
+		**/	
 	function jfaPostData(){
 
 		data = {};
 		$f = this; 
+		//parsing data in data object
 		this.ansElements.forEach(function(item){
-			data[item[0].id] = item.val();
+			//if not a checkbox just get value
+				if(item['isCheckBox'] != true)
+					data[item[0].id] = item.val();
+				else {
+			//if checkbox get all values selected
+					
+					var id = item[0];
+					data[id] = [];
+					$("[data-ques=" + id + "] input").each(function(){
+						if (this.checked) 
+						data[id].push(this.value);
+					});
+					
+				}
 		});
-
 		$url = this.postPath;
-
 		$.post($url, data, function (r){
-
 			if(r.status == 'success'){
 				function reset(){
 					jfaReset.call($f);
@@ -177,8 +217,7 @@ function jfaSetHtml(){
 			}else{
 				jfaWarn("Database problem: " + r.reason);
 			}
-		},"json")
-
+		})
 		.fail(function(d){
 			console.log(d);
 			if(d.status == 404)
@@ -189,6 +228,12 @@ function jfaSetHtml(){
 		});
 	}//jfaPostData
 
+	/*
+		*	A scroll Event added to the form 
+		* 	checks if one of the questions is 
+		*	scrolled in to view. 
+		*	
+		**/		
 	function jfaScrollEvent(){
 		
 		$f.container.scroll(function(){
@@ -196,6 +241,12 @@ function jfaSetHtml(){
 		});
 	}//jfaScrollEvent
 	
+	/*
+		*	Function called in jfaSetHtml() to create the structure
+		*   of each question by using the type and the index.
+		*	@params ques = {num:'', type:'', id:'', required:true||false, question:"Name?"}
+		*		
+		**/	
 	function jfaCreateQuestionStructure(ques, index, arr){
 		$classes = index == 0 ? "item active" : "item";
 		$thisQuestion = $f.quesElements[index] = $('<li>', {class:$classes, "data-ques":ques.id});
@@ -243,6 +294,12 @@ function jfaSetHtml(){
 		$thisQuestion.append($ansDiv);
 		$items.push($thisQuestion);
 	}//jfaCreateQuestionStructure()
+
+	/*
+		*	Create the structure of the input with the type 
+		*	Specified in the ques object that is passes to 
+		*	the function
+		**/
 	function createAndAppendStructure(ques){
 
 		switch(ques.inputType){
@@ -261,6 +318,11 @@ function jfaSetHtml(){
 		}
 
 	}
+
+		/*
+		*	Creates and appends the element structure 
+		*	for the email input. 
+		**/		
 	function emailInputStructure(ques){
 		$emailInputAtr = {type:"email", id:ques.id, 'data-num':ques.num};
 
@@ -272,6 +334,10 @@ function jfaSetHtml(){
 		$f.ansElements.push($input);
 	}
 
+	/*
+	*	Creates and appends the element structure 
+	* 	for the text input.
+	**/	
 	function textInputStructure(ques){
 		$textInputAtr = {type:"text", id:ques.id, 'data-num':ques.num};
 		$thisQuestion.element.ans = 
@@ -282,6 +348,10 @@ function jfaSetHtml(){
 		$f.ansElements.push($input);
 	}
 
+/*
+	*	Creates and appends the element structure 
+	* 	for the select input.
+	**/	
 	function selectInputStructure(ques){
 		$ansDiv.addClass("select");
 
@@ -310,8 +380,18 @@ function jfaSetHtml(){
 			});
 
 	}
+	/*
+		*	Creates and appends the element structure 
+		*	for the checkbox input. 
+		**/	
 	function checkboxInputStructure(ques){
 		$ansDiv.addClass("select");
+		 var id = ques.id;
+		 $checkBox = {
+				0 : ques.id,
+				'isCheckBox' : true,
+				'values' : []
+		 };
 
 			ques.values.forEach(function(ans, index, arr){
 				$id = (index == 0) ? ques.id : ques.id + index;
@@ -326,7 +406,7 @@ function jfaSetHtml(){
 				$checkboxEle = $('<input>', $checkboxAtr)
 						.keyup(jfaCheckboxKeyUpEvent)
 						.change(jfaCheckboxChangeEvent);
-
+				$checkBox['values'].push($checkboxEle);
 				$label = $('<label>', {'for': $id});
 
 				$classes = "btn-answer";
@@ -344,7 +424,12 @@ function jfaSetHtml(){
 				$ansDiv.append($btnAnswer);
 				$ansDiv.append($checkboxEle);
 			});
+		$f.ansElements.push($checkBox);
 	}
+	/*
+		*	Creates and appends the element structure 
+		*	for the date input. 
+		**/	
 	function dateInputStructure(ques){
 		$minDate = ques.min || "01-01-1930";
 		$maxDate = ques.max || "01-01-2010";
@@ -356,6 +441,10 @@ function jfaSetHtml(){
 		$f.ansElements.push($dateDiv);
 		$ansDiv.append($dateDiv);
 	}
+	/*
+		*	Creates and appends the element structure 
+		*	for the number input. 
+		**/	
 	function numberInputStructure(ques){
 		$minNum = ques.min || "";
 		$maxNum = ques.max || "";
@@ -367,7 +456,9 @@ function jfaSetHtml(){
 
 		$ansDiv.append($numberDiv);
 	}
-
+	/*
+	*	Update the progress bar in the footer
+	**/	
 	function updateProgressBar(){
 		$numDone = $(".next.ready").length;
 		$f.percentDone = 100*$numDone / $f.length;
@@ -375,6 +466,9 @@ function jfaSetHtml(){
 		$f.numberDoneElement.html($numDone);
 	}//updateProgressBar
 
+	/*
+	*	Creates the header element structure and returns it
+	**/	
 	function jfaGetHeaderHtml(){
 		$headDiv = $('<div>', {class:"header"});
 		$brand = $('<div>', {class:"brand"});
@@ -386,6 +480,9 @@ function jfaSetHtml(){
 		return $headDiv;
 
 	}
+	/*
+	*	Creates the footer element structure and returns it
+	**/	
 	function jfaGetFooterHtml(){
 		$footDiv = $('<div>', {class:"footer"});
 		//progress
@@ -428,6 +525,9 @@ function jfaSetHtml(){
 
 	}//jfaGetFooterHtml
 
+	/*
+	*	Creates the thanks element structure and returns it
+	**/	
 	function jfaGetThanksHtml(){
 		$thanksDiv = $('<div>', {class:'thanks'});
 		$message = $('<h2>', {class:'message'});
@@ -436,6 +536,9 @@ function jfaSetHtml(){
 		return $thanksDiv;
 	}
 
+	/*
+	*	Creates the thanks sidebar structure and returns it
+	**/	
 	function jfaGetSideBarHtml(){
 		$sideBarDiv = $('<div>', {class:'side-bar'});
 		$f.questions.forEach(function(ques) {
@@ -557,7 +660,7 @@ function jfaSetHtml(){
 
 	function jfaCheckboxChangeEvent(){
 		
-	}
+	}//jfaCheckboxChangeEvent
 
 	//onkeypress
 	function jfaNextButtonKeyPress(){
@@ -581,7 +684,13 @@ function jfaSetHtml(){
 			this.append(arguments[z]);
 		};
 	}
-
+	/*
+		*	CHecks if an element passed in is in the
+		*	the viewport and makes it the active question 
+		*	if it is.
+		*	Called in jfaScrollEvent()
+		*	
+		**/	
 	function jfaCheckItemInViewport(ques, index, items){
 		$questionContainer = $('#' + ques.id);
 		$curQues = $f.currentQuestion;
@@ -642,6 +751,10 @@ function jfaSetHtml(){
 		return;
 	}//jfaWarn
 
+	/*
+	*	jfaForm reset function
+	*	
+	**/	
 	function jfaReset(){
 		$elements = {
 			".select .btn-answer.selected" : "selected", 
@@ -660,7 +773,6 @@ function jfaSetHtml(){
 		}, 1000);
 	}
 
-//outsourced
 
 $.fn.inViewport = function checkInViewport() {
 	
@@ -682,65 +794,132 @@ $.fn.inViewport = function checkInViewport() {
 
 
 
+
+
+
+
+
+
+
 $testForm = {
+
 		"id":"test",
+
 		"welcome":"Hey, ready to flow? First let us know you're here!",
+
 		"nextButtonText" : "next",
+
 		"submitButtonText" : "Send It!",
+
 		"postPath" : "postit.php",
+
 		"logoPath" : "logo.png",
+
 		"title":"JFA Sign-up",
+
 		"questions":[
+
 		{
+
 			"id":"name",
+
 			"question":"What do you go by?",
-			"values":["Him", "She", "It", "Them", "Tim"],
+
 			"boolean":false,
+
 			"required":true,
-			"inputType":"checkbox",
+
+			"inputType":"text",
+
 		},
+
 		{
+
 			"id":"is-Student",
+
 			"question":"Are you a student?",
+
 			"values":["yes", "no"],
+
 			"boolean":true,
+
 			"required":false,
+
 			"inputType":"select",
+
 		},
 
+
+
 		{
+
 			"id":"student-id",
+
 			"question":"Student Id Number?",
+
 			"boolean":false,
+
 			"required":false,
+
 			"inputType":"number",
+
+		},
+
+
+
+		{
+
+			"id":"tshirt-size",
+
+			"question":"What's your t-shirt size?",
+
+			"values" : ["x-small", "small", "medium", "large", "x-large", "xx-large"],
+
+			"boolean":false,
+
+			"required":true,
+
+			"inputType":"select",
+
 		},
 
 		{
-			"id":"tshirt-size",
-			"question":"What's your t-shirt size?",
-			"values" : ["x-small", "small", "medium", "large", "x-large", "xx-large"],
-			"boolean":false,
-			"required":true,
-			"inputType":"select",
-		},
-		{
+
 			"id":"transport-type",
+
 			"question":"What's your your type size?",
+
 			"values" : ["run", "fly", "swim"],
+
 			"required":true,
+
 			"inputType":"select",
+
 		},
+
 		{
+
 			"id":"birthdate",
+
 			"question":"When's your birthday?",
+
 			"required":false,
+
 			"inputType":"date",
+
 			"max":"01-01-2010",
+
 			"min":"01-02-1922"
+
 		}
+
 	], //questions
+
+
 
 	"thanks":"Thank you for cheking in with us! Go Flow!"
 
+
+
 }//testForm object
+

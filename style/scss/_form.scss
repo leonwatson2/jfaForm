@@ -1,6 +1,7 @@
 @import "variables.scss";
 
 .jfa-form{
+	font-family: 'Carrois Gothic', sans-serif;
 	@include noNumberSpinner();
 	@include noDateButtons();
 
