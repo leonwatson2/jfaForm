@@ -5,11 +5,7 @@
 	*	
 	**/	
 
-
-
-
-
-function jfaForm($f){
+	function jfaForm($f){
 	//add side bar 
 	//add next on enter
 	if($f.id != undefined){
@@ -54,9 +50,14 @@ function jfaForm($f){
 
 
 //visual
+
+/*
+*	Scrolls to question with the index of the number passed in
+*	Parameters: num
+**/	
 function jfaGoToQuestion(num){
 	num = num != undefined ? num : this.currentQuestion;
-	 	
+	
 	if(num != this.length ){
 		$curScroll = $('#'+ this.id).scrollTop();
 		$('#'+ this.id).animate({
@@ -67,7 +68,12 @@ function jfaGoToQuestion(num){
 	
 
 }
-
+/*
+*	Changes the current active question; 
+*	adds corresponding classes; and focuses on input
+*   all according to the passed in number
+*	Parameters: num
+**/	
 function jfaMakeActiveQuestion(num){
 
 	$('.item').removeClass('active');
@@ -81,18 +87,23 @@ function jfaMakeActiveQuestion(num){
 	}
 	
 }
-
+/*
+*	Create the HTML structure of the jfaForm 
+*	and added it to the document according to 
+*   the id specified
+*	
+**/	
 function jfaSetHtml(){
 	$f = this;
 	$container = $('#' + $f.id);
 	$submitBtnAttrs = {	
-						id:$f.id+"-submit", class:"submit", 
-						type:"submit", text:$f.submitButtonText
-					};
+		id:$f.id+"-submit", class:"submit", 
+		type:"submit", text:$f.submitButtonText
+	};
 	$submitBtn = $("<button>", $submitBtnAttrs)
-				.click(function(){
-					jfaSubmit.call($f);
-				});
+	.click(function(){
+		jfaSubmit.call($f);
+	});
 	$header = jfaGetHeaderHtml();
 	$footer = jfaGetFooterHtml();
 	$thanks = jfaGetThanksHtml();
@@ -101,31 +112,33 @@ function jfaSetHtml(){
 	$items = [];
 
 
-		$f.questions.forEach(jfaCreateQuestionStructure);
+	$f.questions.forEach(jfaCreateQuestionStructure);
 
 
-		$ulQuestions = $('<ul>', {class:"questions"});
-		$items.forEach(function(item){
-			$ulQuestions.append(item);
-		});
+	$ulQuestions = $('<ul>', {class:"questions"});
+	$items.forEach(function(item){
+		$ulQuestions.append(item);
+	});
 
-		$ulQuestions.append($submitBtn);
+	$ulQuestions.append($submitBtn);
 
 
-		$container.append();
-		
+	$container.append();
+	
 
-		$container.appendElements($header, $ulQuestions, $footer, $sideBar, $thanks);
+	$container.appendElements($header, $ulQuestions, $footer, $sideBar, $thanks);
 
-		jfaScrollEvent();
+	jfaScrollEvent();
 	}//jfaSetHtml
-	function jfainit(){
-		jfaSetHtml();
-		jfaScrollEvent();
-	}//jfainit
 
+	/*
+	*	Validates input before submitting the 
+	*	the answers via post.
+	*	
+	**/	
 	function jfaSubmit(){
 		$f = this;
+		//validation not yet implemented
 		this.required.forEach(function(item, $f){
 			if(item.element.ans.val() != "")
 				;
@@ -140,6 +153,7 @@ function jfaSetHtml(){
 
 	}//jfaSubmit
 
+	//validation of a single input
 	function jfaValidateInput(item, index){
 		$question = item.element.question.html();
 		$ans = item.element;
@@ -157,32 +171,39 @@ function jfaSetHtml(){
 
 	}//jfaValildateInput
 
+	/*
+	*	Calls jQueries ajax function post and post input
+	*	to a specified file. If successful shows thank you screen
+	*	and if not throws an warning to the console. 
+	* 	The ajax function expects json to be returned.
+	**/	
 	function jfaPostData(){
 
 		data = {};
 		$f = this; 
+		//parsing data in data object
 		this.ansElements.forEach(function(item){
-				if(item['isCheckBox'] != true)
-					data[item[0].id] = item.val();
-				else {
-					
-					var id = item[0];
-					data[id] = [];
-					$("[data-ques=" + id + "] input").each(function(){
-						if (this.checked) 
-						data[id].push(this.value);
-					});
-					
-				}
-		});
-		console.log(data);
+			//if not a checkbox just get value
+			if(item['isCheckBox'] != true)
+				data[item[0].id] = item.val();
+			else {
+			//if checkbox get all values selected
+			
+			var id = item[0];
+			data[id] = [];
+			$("[data-ques=" + id + "] input").each(function(){
+				if (this.checked) 
+					data[id].push(this.value);
+			});
+			
+		}
+	});
 		$url = this.postPath;
 		$.post($url, data, function (r){
 			if(r.status == 'success'){
 				function reset(){
 					jfaReset.call($f);
 				}
-				console.log($f.thanks);
 				if(typeof $f.thanks == "string")
 					$message = $f.thanks;
 				else
@@ -190,13 +211,11 @@ function jfaSetHtml(){
 
 				$("#" + $f.id + " .thanks .message").html($message);
 				$("#" + $f.id + " .thanks").addClass('open');
-				console.log($f.resetDelay);
 				setTimeout(reset, $f.resetDelay*1000);
 			}else{
 				jfaWarn("Database problem: " + r.reason);
 			}
 		}, "json")
-
 		.fail(function(d){
 			console.log(d);
 			if(d.status == 404)
@@ -207,6 +226,12 @@ function jfaSetHtml(){
 		});
 	}//jfaPostData
 
+	/*
+	*	A scroll Event added to the form 
+	* 	checks if one of the questions is 
+	*	scrolled in to view. 
+	*	
+	**/		
 	function jfaScrollEvent(){
 		
 		$f.container.scroll(function(){
@@ -214,6 +239,12 @@ function jfaSetHtml(){
 		});
 	}//jfaScrollEvent
 	
+	/*
+	*	Function called in jfaSetHtml() to create the structure
+	*   of each question by using the type and the index.
+	*	@params ques = {num:'', type:'', id:'', required:true||false, question:"Name?"}
+	*		
+	**/	
 	function jfaCreateQuestionStructure(ques, index, arr){
 		$classes = index == 0 ? "item active" : "item";
 		$thisQuestion = $f.quesElements[index] = $('<li>', {class:$classes, "data-ques":ques.id});
@@ -221,27 +252,27 @@ function jfaSetHtml(){
 
 		$thisQuestion.num = ques.num = index + 1;
 		$num = $('<div>', {class:"num"})
-				.html($thisQuestion.num);
+		.html($thisQuestion.num);
 
 		$thisQuestion.element.ansContainer = $ansDiv = $('<div>', {class:"answer"});
 		$thisQuestion.element.question 
-			= $question 
-			= $('<div>', {class:"question", required:ques.required})
-				.html(ques.question);
+		= $question 
+		= $('<div>', {class:"question", required:ques.required})
+		.html(ques.question);
 		if(ques.required){
 			$f.required.push($thisQuestion);
 			$thisQuestion.answered = false;
 		}
 
 		$thisQuestion.element.nextButton 
-			= $nextBut 
-			= $('<span>', {class:"next", 'data-num':ques.num, 'data-name':ques.id, 'tabindex':0})
-				.keypress(jfaNextButtonKeyPress)
-				.html($f.nextButtonText)
-				.click(jfaNextButtonClickEvent)
-				.keyup(jfaNextButtonClickEvent);
+		= $nextBut 
+		= $('<span>', {class:"next", 'data-num':ques.num, 'data-name':ques.id, 'tabindex':0})
+		.keypress(jfaNextButtonKeyPress)
+		.html($f.nextButtonText)
+		.click(jfaNextButtonClickEvent)
+		.keyup(jfaNextButtonClickEvent);
 		$pressEnterPrompt = $('<div>', {class:'jfa-enter', 'data-num':ques.num})
-				.html('<small>press</small> Enter');
+		.html('<small>press</small> Enter');
 
 		
 		$thisQuestion.appendElements($num, $question);
@@ -255,12 +286,18 @@ function jfaSetHtml(){
 		if($f.length != $thisQuestion.num){
 			$ansDiv.append($nextBut)
 		}
-			$ansDiv.append($pressEnterPrompt);
+		$ansDiv.append($pressEnterPrompt);
 
 
 		$thisQuestion.append($ansDiv);
 		$items.push($thisQuestion);
 	}//jfaCreateQuestionStructure()
+
+	/*
+	*	Create the structure of the input with the type 
+	*	Specified in the ques object that is passes to 
+	*	the function
+	**/
 	function createAndAppendStructure(ques){
 
 		switch(ques.inputType){
@@ -279,120 +316,147 @@ function jfaSetHtml(){
 		}
 
 	}
-	function emailInputStructure(ques){
-		$emailInputAtr = {type:"email", id:ques.id, 'data-num':ques.num};
 
-		$thisQuestion.element.ans = 
-		$input = $('<input>', $emailInputAtr)
-				.keyup(jfaKeyUpEvent)
-				.change(jfaKeyUpEvent);
-		$ansDiv.append($input);
-		$f.ansElements.push($input);
-	}
+		/*
+		*	Creates and appends the element structure 
+		*	for the email input. 
+		**/		
+		function emailInputStructure(ques){
+			$emailInputAtr = {type:"email", id:ques.id, 'data-num':ques.num};
 
+			$thisQuestion.element.ans = 
+			$input = $('<input>', $emailInputAtr)
+			.keyup(jfaKeyUpEvent)
+			.change(jfaKeyUpEvent);
+			$ansDiv.append($input);
+			$f.ansElements.push($input);
+		}
+
+	/*
+	*	Creates and appends the element structure 
+	* 	for the text input.
+	**/	
 	function textInputStructure(ques){
 		$textInputAtr = {type:"text", id:ques.id, 'data-num':ques.num};
 		$thisQuestion.element.ans = 
 		$input = $('<input>', $textInputAtr)
-				.keyup(jfaKeyUpEvent)
-				.change(jfaKeyUpEvent);
+		.keyup(jfaKeyUpEvent)
+		.change(jfaKeyUpEvent);
 		$ansDiv.append($input);
 		$f.ansElements.push($input);
 	}
 
+	/*
+	*	Creates and appends the element structure 
+	* 	for the select input.
+	**/	
 	function selectInputStructure(ques){
 		$ansDiv.addClass("select");
 
 		$thisQuestion.element.ans = 
 		$selectDiv = $('<select>', {name:ques.id, id: ques.id, 'data-num':ques.num, tabindex:-1})
-				.keyup(jfaKeyUpEvent)
-				.change(jfaSelectOnChangeEvent);
+		.keyup(jfaKeyUpEvent)
+		.change(jfaSelectOnChangeEvent);
 		$f.ansElements.push($selectDiv);	
-			ques.values.forEach(function(ans, index, arr){
-				
-				$classes = "btn-answer";
+		ques.values.forEach(function(ans, index, arr){
+			
+			$classes = "btn-answer";
 
-				$btnAnswer = $('<button>', {name:ques.id, class: $classes,'data-num':ques.num, value:ans})
-									.click(jfaSelectButtonClickEvent)
-									.on('keyup', jfaSelectButtonKeyUpEvent);
-				$option = $('<option>', {value:ans});
+			$btnAnswer = $('<button>', {name:ques.id, class: $classes,'data-num':ques.num, value:ans})
+			.click(jfaSelectButtonClickEvent)
+			.on('keyup', jfaSelectButtonKeyUpEvent);
+			$option = $('<option>', {value:ans});
 
 
-				$labelSpan = $('<span>', {text:ans}); 
-				$btnAnswer.append($labelSpan);
-				$option.html(ans);
+			$labelSpan = $('<span>', {text:ans}); 
+			$btnAnswer.append($labelSpan);
+			$option.html(ans);
 
-				$selectDiv.append($option);
-				$ansDiv.append($btnAnswer);
-				$ansDiv.append($selectDiv);
-			});
+			$selectDiv.append($option);
+			$ansDiv.append($btnAnswer);
+			$ansDiv.append($selectDiv);
+		});
 
 	}
+	/*
+	*	Creates and appends the element structure 
+	*	for the checkbox input. 
+	**/	
 	function checkboxInputStructure(ques){
 		$ansDiv.addClass("select");
-		 var id = ques.id;
-		 $checkBox = {
-				0 : ques.id,
-				'isCheckBox' : true,
-				'values' : []
-		 };
+		var id = ques.id;
+		$checkBox = {
+			0 : ques.id,
+			'isCheckBox' : true,
+			'values' : []
+		};
 
-			ques.values.forEach(function(ans, index, arr){
-				$id = (index == 0) ? ques.id : ques.id + index;
-				$checkboxAtr = {
-								name:ques.id, 
-								id: $id, 
-								'data-num':ques.num, 
-								tabindex:-1, 
-								type:'checkbox', 
-								value:ans
-							};
-				$checkboxEle = $('<input>', $checkboxAtr)
-						.keyup(jfaCheckboxKeyUpEvent)
-						.change(jfaCheckboxChangeEvent);
-				$checkBox['values'].push($checkboxEle);
-				$label = $('<label>', {'for': $id});
+		ques.values.forEach(function(ans, index, arr){
+			$id = (index == 0) ? ques.id : ques.id + index;
+			$checkboxAtr = {
+				name:ques.id, 
+				id: $id, 
+				'data-num':ques.num, 
+				tabindex:-1, 
+				type:'checkbox', 
+				value:ans
+			};
+			$checkboxEle = $('<input>', $checkboxAtr)
+			.keyup(jfaCheckboxKeyUpEvent)
+			.change(jfaCheckboxChangeEvent);
+			$checkBox['values'].push($checkboxEle);
+			$label = $('<label>', {'for': $id});
 
-				$classes = "btn-answer";
-				$btnAnswerAtr = {name:ques.id, class: $classes,'data-num':ques.num};
-				$btnAnswer = $('<button>', $btnAnswerAtr)
-									.click(jfaCheckboxButtonClickEvent)
-									.keyup(jfaCheckboxButtonKeyUpEvent);
-				
+			$classes = "btn-answer";
+			$btnAnswerAtr = {name:ques.id, class: $classes,'data-num':ques.num};
+			$btnAnswer = $('<button>', $btnAnswerAtr)
+			.click(jfaCheckboxButtonClickEvent)
+			.keyup(jfaCheckboxButtonKeyUpEvent);
+			
 
 
-				$btnAnswer.appendElements($label);
+			$btnAnswer.appendElements($label);
 
-				$label.html(ans);
+			$label.html(ans);
 
-				$ansDiv.append($btnAnswer);
-				$ansDiv.append($checkboxEle);
-			});
+			$ansDiv.append($btnAnswer);
+			$ansDiv.append($checkboxEle);
+		});
 		$f.ansElements.push($checkBox);
 	}
-	function dateInputStructure(ques){
-		$minDate = ques.min || "01-01-1930";
-		$maxDate = ques.max || "01-01-2010";
+	/*
+		*	Creates and appends the element structure 
+		*	for the date input. 
+		**/	
+		function dateInputStructure(ques){
+			$minDate = ques.min || "01-01-1930";
+			$maxDate = ques.max || "01-01-2010";
 
-		$thisQuestion.element.ans = 
-		$dateDiv = $('<input>', {type:"date", id:ques.id, 'data-num':ques.num, placeholder:"04/07/1993", min:$minDate, max:$maxDate})
-						.keyup(jfaCalendarKeyUpEvent)
-						.change(jfaCalendarKeyUpEvent);
-		$f.ansElements.push($dateDiv);
-		$ansDiv.append($dateDiv);
-	}
-	function numberInputStructure(ques){
-		$minNum = ques.min || "";
-		$maxNum = ques.max || "";
+			$thisQuestion.element.ans = 
+			$dateDiv = $('<input>', {type:"date", id:ques.id, 'data-num':ques.num, placeholder:"04/07/1993", min:$minDate, max:$maxDate})
+			.keyup(jfaCalendarKeyUpEvent)
+			.change(jfaCalendarKeyUpEvent);
+			$f.ansElements.push($dateDiv);
+			$ansDiv.append($dateDiv);
+		}
+	/*
+		*	Creates and appends the element structure 
+		*	for the number input. 
+		**/	
+		function numberInputStructure(ques){
+			$minNum = ques.min || "";
+			$maxNum = ques.max || "";
 
-		$thisQuestion.element.ans = 
-		$numberDiv = $('<input>', {id:ques.id, 'data-num':ques.num, type:'number'})
-						.keyup(jfaNumberKeyUpEvent);
-		$f.ansElements.push($numberDiv);
+			$thisQuestion.element.ans = 
+			$numberDiv = $('<input>', {id:ques.id, 'data-num':ques.num, type:'number'})
+			.keyup(jfaNumberKeyUpEvent);
+			$f.ansElements.push($numberDiv);
 
-		$ansDiv.append($numberDiv);
-	}
-
+			$ansDiv.append($numberDiv);
+		}
+	/*
+	*	Update the progress bar in the footer
+	**/	
 	function updateProgressBar(){
 		$numDone = $(".next.ready").length;
 		$f.percentDone = 100*$numDone / $f.length;
@@ -400,6 +464,9 @@ function jfaSetHtml(){
 		$f.numberDoneElement.html($numDone);
 	}//updateProgressBar
 
+	/*
+	*	Creates the header element structure and returns it
+	**/	
 	function jfaGetHeaderHtml(){
 		$headDiv = $('<div>', {class:"header"});
 		$brand = $('<div>', {class:"brand"});
@@ -411,28 +478,31 @@ function jfaSetHtml(){
 		return $headDiv;
 
 	}
+	/*
+	*	Creates the footer element structure and returns it
+	**/	
 	function jfaGetFooterHtml(){
 		$footDiv = $('<div>', {class:"footer"});
 		//progress
 		$progressDiv = $('<div>', {id:"progress"});
-			$labelDiv = $('<div>', {class:"label"});
-			$f.numberDoneElement = $leftNumSpan = $('<span>', {id:"left", text:"0"});
-			$totalNumSpan = $('<span>', {id:"total", text:$f.length});
+		$labelDiv = $('<div>', {class:"label"});
+		$f.numberDoneElement = $leftNumSpan = $('<span>', {id:"left", text:"0"});
+		$totalNumSpan = $('<span>', {id:"total", text:$f.length});
 		//progressbar
-			$barDiv = $('<div>', {class:"bar"});
-			$f.progressBarDiv = $progressBarDiv = $('<div>', {class:"progress"});
+		$barDiv = $('<div>', {class:"bar"});
+		$f.progressBarDiv = $progressBarDiv = $('<div>', {class:"progress"});
 
 		//nav buttons
 		$navButtonsDiv = $('<div>', {id:"nav-buttons", class:"pull-right"});
-			$navUpDiv = $('<div>', {class:"nav-up nav"})
-							.click("up", jfaNavButtonClickEvent);
-			$navDownDiv = $('<div>', {class:"nav-down nav"})
-							.click("down", jfaNavButtonClickEvent);
+		$navUpDiv = $('<div>', {class:"nav-up nav"})
+		.click("up", jfaNavButtonClickEvent);
+		$navDownDiv = $('<div>', {class:"nav-down nav"})
+		.click("down", jfaNavButtonClickEvent);
 
-			$iconUp = "jfa jfa-chevron-up";
-			$iconDown = "jfa jfa-chevron-down";
-			$iconUpElement = $('<i>', {class:$iconUp});
-			$iconDownElement = $('<i>', {class:$iconDown});
+		$iconUp = "jfa jfa-chevron-up";
+		$iconDown = "jfa jfa-chevron-down";
+		$iconUpElement = $('<i>', {class:$iconUp});
+		$iconDownElement = $('<i>', {class:$iconDown});
 
 
 
@@ -453,6 +523,9 @@ function jfaSetHtml(){
 
 	}//jfaGetFooterHtml
 
+	/*
+	*	Creates the thanks element structure and returns it
+	**/	
 	function jfaGetThanksHtml(){
 		$thanksDiv = $('<div>', {class:'thanks'});
 		$message = $('<h2>', {class:'message'});
@@ -461,6 +534,9 @@ function jfaSetHtml(){
 		return $thanksDiv;
 	}
 
+	/*
+	*	Creates the thanks sidebar structure and returns it
+	**/	
 	function jfaGetSideBarHtml(){
 		$sideBarDiv = $('<div>', {class:'side-bar'});
 		$f.questions.forEach(function(ques) {
@@ -533,8 +609,8 @@ function jfaSetHtml(){
 				if(num == $f.length) 
 					jfaSubmit.call($f);					
 				else if($f.currentQuestion < $f.length - 1)
-						$f.currentQuestion++;
-					$f.goToQuestion(parseInt(num));
+					$f.currentQuestion++;
+				$f.goToQuestion(parseInt(num));
 			}
 		} else {
 			$('.next[data-name=' + id + ']').removeClass("ready");
@@ -582,7 +658,7 @@ function jfaSetHtml(){
 
 	function jfaCheckboxChangeEvent(){
 		
-	}
+	}//jfaCheckboxChangeEvent
 
 	//onkeypress
 	function jfaNextButtonKeyPress(){
@@ -606,19 +682,25 @@ function jfaSetHtml(){
 			this.append(arguments[z]);
 		};
 	}
+	/*
+		*	CHecks if an element passed in is in the
+		*	the viewport and makes it the active question 
+		*	if it is.
+		*	Called in jfaScrollEvent()
+		*	
+		**/	
+		function jfaCheckItemInViewport(ques, index, items){
+			$questionContainer = $('#' + ques.id);
+			$curQues = $f.currentQuestion;
+			if($curQues != index && $questionContainer.inViewport()){	
+				$i = items[index];
+				if(index > $curQues)
+					$f.currentQuestion ++;
+				else $f.currentQuestion--;
+				jfaMakeActiveQuestion.call($f, index)
+			}
 
-	function jfaCheckItemInViewport(ques, index, items){
-		$questionContainer = $('#' + ques.id);
-		$curQues = $f.currentQuestion;
-		if($curQues != index && $questionContainer.inViewport()){	
-			$i = items[index];
-			if(index > $curQues)
-				$f.currentQuestion ++;
-			else $f.currentQuestion--;
-			jfaMakeActiveQuestion.call($f, index)
 		}
-
-	}
 
 
 	//Debug Utlities
@@ -667,6 +749,10 @@ function jfaSetHtml(){
 		return;
 	}//jfaWarn
 
+	/*
+	*	jfaForm reset function
+	*	
+	**/	
 	function jfaReset(){
 		$elements = {
 			".select .btn-answer.selected" : "selected", 
@@ -685,22 +771,23 @@ function jfaSetHtml(){
 		}, 1000);
 	}
 
-//outsourced
 
-$.fn.inViewport = function checkInViewport() {
-	
-	$item = $(this).parent().parent();
-	offset = $item.offset().top;
-	$height = $item.height();
+	$.fn.inViewport = function checkInViewport() {
+		
+		$item = $(this).parent().parent();
+		offset = $item.offset().top;
+		$height = $item.height();
 
-	$val = window.innerHeight - (offset + $height);
+		$val = window.innerHeight - (offset + $height);
 
-	console.log();
-  
-  return (
-   $val > 0 && $val < window.innerHeight
-  );
-}
+		console.log();
+		
+		return (
+			$val > 0 && $val < window.innerHeight
+			);
+	}
+
+
 
 
 
