@@ -15,9 +15,12 @@ It creates elements from a javascript object that looks as follows.
 ```
 $testForm = {
 		"id":"test",
+		"title":"JFA signup",
 		"welcome":"Hey, ready to flow? First let us know you're here!",
 		"nextButtonText" : "next",
 		"submitButtonText" : "Send It!",
+		"postPath" : "postit.php",
+		"resetDelay": 4,
 		"questions":[
 		{
 			"id":"name",
@@ -49,7 +52,7 @@ $testForm = {
 			"values" : ["x-small", "small", "medium", "large", "x-large", "xx-large"],
 			"boolean":false,
 			"required":true,
-			"inputType":"select",
+			"inputType":"checkbox",
 		},
 		{
 			"id":"transport-type",
@@ -76,6 +79,10 @@ $testForm = {
 ### Options
 ``id`` a unique id for where the form is going to be set
 
+``title`` The title displayed at the top of the form
+
+``postPath`` The path to the file where the ajax post will happen
+
 ``welcome`` welcome message to be display at the beginning
 
 ``nextButtonText`` text to be displayed in the next button
@@ -84,6 +91,7 @@ $testForm = {
 
 ``questions`` an array of objects for the questions
 
+``resetDelay`` the amount of time before the form is cleared and scrolled back to the top
 
 
 #### Question Options
@@ -102,14 +110,14 @@ $testForm = {
 ``min`` & ``max`` and used for the min and max of inputs number and date
 
 
-\*``values`` is required on ``inputType``s of ``select`` and ``boolean`` 
+\*``values`` is required on ``inputType``s of ``select``, ``checkbox`` and ``boolean`` 
 
 
-This is passed to the jfaFrom "constructor" for each part of the jfa_form.
+This is passed to the jfaForm "constructor" for each part of the jfa_form.
 Then calling init() on that object puts the questions with numbers in the 
 element with the id ``"test"`` in this case.
 
-As you image this could also be a json file 
+As you imagine this could also be a json file 
 that is then parse into a JavaScript object.  
 
 
@@ -118,6 +126,38 @@ that is then parse into a JavaScript object.
 	var r = new jfaForm($testForm);	
 	r.init();
 ```
+
+#### How posting works
+
+When posted to a the file specified in the ``postPath`` variable
+you can access the values with the ``$_POST`` variable with the same names
+as the ids for your questions. 
+
+So for the above examples my post variables and values would be
+```
+<?php 
+$_POST['name']; //returns text
+$_POST['is-student']; //returns ("yes" OR "no")
+$_POST['student-id']; //returns a number
+$_POST['tshirt-size']; //returns ("x-small", "small", "medium", "large", "x-large", OR "xx-large")
+$_POST['transport-type']; // returns ("run", "fly", "swim")
+$_POST['birthdate']; //returns a date in the form YYYY-mm-dd
+
+
+```
+And the form expects a json value back with a property status that is success
+```
+$response_array = ['status' =>'success'];
+
+/* Response */
+
+	header('Content-type: application/json');
+
+	echo json_encode($response_array);
+
+?>
+```
+
 
 ##### Next Steps
 - [ ] Create structure for url input
